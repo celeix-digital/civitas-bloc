@@ -1,0 +1,81 @@
+<main class="main-wrapper">
+        <section class="section_test-app">
+          <div class="page-padding">
+            <div class="container-large"></div>
+          </div>
+          <div class="padding-global">
+            <div class="test-app_wrapper">
+              <div class="container-medium">
+                <div class="test-app_component">
+                  <div class="margin-bottom margin-small text-align-center">
+                    <h1>Coin Transaction</h1>
+                    <div>Minter:</div>
+                    <div>Current User Account:</div>
+                  </div>
+                  <div class="test-app_item text-align-center">
+                    <h3>Check Balance</h3>
+                    <div>Account:</div>
+                    <div class="test-app_input">
+                      <div class="test-app_form-wrapper w-form">
+                        <form id="email-form" name="email-form" data-name="Email Form" method="get" class="test-app_form"><label for="check-balance">Balance:</label><input type="text" class="text-field w-input" maxlength="256" name="check-balance" data-name="check-balance" placeholder="" id="check-balance" /><input type="submit" value="Submit" data-wait="Please wait..." class="button is-hidden w-button" /></form>
+                        <div class="w-form-done">
+                          <div>Thank you! Your submission has been received!</div>
+                        </div>
+                        <div class="w-form-fail">
+                          <div>Oops! Something went wrong while submitting the form.</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="test-app_item text-align-center">
+                    <h3>Mint Coin</h3>
+                    <div class="padding-bottom padding-medium"></div>
+                    <div class="test-app_input">
+                      <div class="test-app_form-wrapper w-form">
+                        <form id="email-form" name="email-form" data-name="Email Form" method="get" class="test-app_form">
+                          <div class="test-app_form-flex"><label for="mint-to">To:</label><select id="mint-to" name="mint-to" data-name="mint-to" class="w-select">
+                              <option value="">Please Select Account</option>
+                              <option value="First">First choice</option>
+                              <option value="Second">Second choice</option>
+                              <option value="Third">Third choice</option>
+                            </select></div>
+                          <div class="test-app_form-flex"><label for="min-amount">Amount:</label><input type="text" class="text-field w-input" maxlength="256" name="min-amount" data-name="min-amount" placeholder="" id="min-amount" /></div><input type="submit" value="Submit" data-wait="Please wait..." class="button is-hidden w-button" />
+                        </form>
+                        <div class="w-form-done">
+                          <div>Thank you! Your submission has been received!</div>
+                        </div>
+                        <div class="w-form-fail">
+                          <div>Oops! Something went wrong while submitting the form.</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="test-app_item text-align-center">
+                    <h3>Send Coin</h3>
+                    <div>Account:</div>
+                    <div class="test-app_input">
+                      <div class="test-app_form-wrapper w-form">
+                        <form id="email-form" name="email-form" data-name="Email Form" method="get" class="test-app_form"><input type="submit" value="Submit" data-wait="Please wait..." class="button is-hidden w-button" />
+                          <div class="test-app_form-flex"><label for="send-to">To:</label><select id="send-to" name="send-to" data-name="send-to" class="w-select">
+                              <option value="">Please Select an Account</option>
+                              <option value="First">First choice</option>
+                              <option value="Second">Second choice</option>
+                              <option value="Third">Third choice</option>
+                            </select></div>
+                          <div class="test-app_form-flex"><label for="send-amount">Amount:</label><input type="text" class="text-field w-input" maxlength="256" name="send-amount" data-name="send-amount" placeholder="" id="send-amount" /></div>
+                        </form>
+                        <div class="w-form-done">
+                          <div>Thank you! Your submission has been received!</div>
+                        </div>
+                        <div class="w-form-fail">
+                          <div>Oops! Something went wrong while submitting the form.</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
