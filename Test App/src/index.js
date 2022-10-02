@@ -6,6 +6,12 @@ import reportWebVitals from './reportWebVitals';
 import { toast, ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+const mount = new App ({
+  target: document.getElementById('test-app')
+})
+
+export default mount
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
