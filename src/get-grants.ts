@@ -65,7 +65,8 @@ export interface Grant {
     // query the internal elelments of the collection
     const title = newItem.querySelector<HTMLHeadingElement>('[data-element="grant-title"]');
     const rfaNumber = newItem.querySelector<HTMLDivElement>('[data-element="rfaNumber"]');
-    const grantSummary = newItem.querySelector<HTMLParagraphElement>('[data-element="grant-summary]');
+    // const grantSummary = newItem.querySelector<HTMLParagraphElement>('[data-element="grant-title"]');
+    const grantSummary = newItem.querySelector<HTMLParagraphElement>('[data-element="grant-summary"]');
     const grantBudget = newItem.querySelector<HTMLDivElement>('[data-element="grant-budget"]');
   
     // populate the internal items
