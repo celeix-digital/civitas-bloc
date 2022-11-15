@@ -1,18 +1,24 @@
 const passport = require("passport");
 const localStrategy = require("passport-local").Strategy;
+const Organization = require("../../models/organization.model");
+const OrganizationJoinRequest = require("../../models/organizationJoinRequest.model");
 const User = require("../../models/user.model");
 var randomize = require("randomatic");
 const { sendEmail } = require("./../../utils/emails");
 
 exports.register = async (req, res, next) => {
   try {
-    const { name, email, wallet, password } = req.body;
+    let { name, email, wallet, password, type, organizationCode } = req.body;
+    console.log("req.body", req.body);
+    console.log("organizationCode", organizationCode);
+    console.log(type);
     if (!name || !email || !password) {
       return res.send({
         status: false,
         message: "Please fill all required fields",
       });
     }
+
     let playload = req.body;
     let user = await User.findOne({
       $or: [{ email }, { wallet }],
@@ -23,10 +29,41 @@ exports.register = async (req, res, next) => {
         data: user,
         message: "A Wallet or Email already associated to some other user",
       });
+
+    console.log("payload", playload);
     user = await User.create(playload);
     const emailVerificationCode = randomize("Aa0", 10);
     user.emailVerificationCode = emailVerificationCode;
     await user.save();
+
+    if (organizationCode !== null) {
+      console.log("....................................");
+      const validorganizationCode = await Organization.find({
+        organizationCode: organizationCode,
+      });
+      console.log("validorganizationCode", validorganizationCode);
+      if (!validorganizationCode) {
+        return res.send({
+          status: false,
+          message: "Organization Code does not match",
+        });
+      }
+      const organizationId = validorganizationCode[0]?._id;
+      const userId = user?._id;
+      console.log("organizationId", organizationId);
+      console.log("userId", userId);
+      let payload = {
+        organizationId: organizationId,
+        userId: userId,
+      };
+
+      console.log("payload", payload);
+      const requestToJoinOrganization = await OrganizationJoinRequest.create(
+        payload
+      );
+      console.log("requestToJoinOrganization", requestToJoinOrganization);
+    }
+
     const link = `${process.env.BASE_URL}/v1/front/users/verify-email/${user._id}/${emailVerificationCode}`; // change
     sendEmail(
       user.email,
@@ -124,7 +161,7 @@ exports.login = async (req, res, next) => {
 };
 
 exports.verifyEmail = async (req, res) => {
-  console.log("zain bhai");
+  console.log("verifyEmail");
   const { id, token } = req.params;
   const user = await User.findOne({
     _id: id,
@@ -144,6 +181,7 @@ exports.verifyEmail = async (req, res) => {
 exports.updateProfile = async (req, res, next) => {
   try {
     let payload = req.body;
+    console.log("payload updateProfile", payload);
     if (!payload._id) {
       return res.send({
         success: false,
@@ -151,11 +189,11 @@ exports.updateProfile = async (req, res, next) => {
       });
     }
 
-    if (req.files)
-      for (const key in req.files) {
-        const image = req.files[key][0];
-        payload[`${key}`] = image.filename;
-      }
+    if (req.files) console.log("zainu");
+    for (const key in req.files) {
+      const image = req.files[key][0];
+      payload[`${key}`] = image.filename;
+    }
     if (payload.password === "") {
       delete payload.passport;
     }
@@ -178,6 +216,7 @@ exports.forgotPassword = async (req, res, next) => {
     if (!user) {
       return res.json({ status: "User Not Exists!!" });
     }
+    console.log("email forgotPassword", email);
     const resetPasswordCode = randomize("Aa0", 10);
     user.forgotPasswordCode = resetPasswordCode;
     await user.save();
@@ -186,7 +225,7 @@ exports.forgotPassword = async (req, res, next) => {
       user.email,
       "forgotPassword",
       { url: link },
-      "Email Verification"
+      "Forgot our password"
     );
     return res.status(200).send({
       success: true,
@@ -200,10 +239,16 @@ exports.forgotPassword = async (req, res, next) => {
 
 exports.resetPassword = async (req, res, next) => {
   try {
-    console.log("zain bhai");
     const { id, token } = req.params;
+    console.log("id bhai", id);
+    console.log("token bhai", token);
     const { password } = req.body;
+    console.log("password bhai", password);
     const user = await User.findOne({ _id: id });
+    console.log("user", user);
+    // if (user.forgotPasswordCode === token) {
+    //   console.log("This is reset Password");
+    // }
     if (!user || (user && user.forgotPasswordCode !== token)) {
       return res.json({ status: false, message: "Invalid request" });
     }

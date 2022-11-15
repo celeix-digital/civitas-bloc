@@ -26,6 +26,7 @@ exports.sendEmail = async (
       };
       mailgun.messages().send(msg, function (err, body) {
         if (err) {
+          console.log(err);
         } else {
           console.log(body);
         }

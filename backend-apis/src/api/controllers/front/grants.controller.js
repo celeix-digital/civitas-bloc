@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 exports.create = async (req, res, next) => {
   try {
     let payload = req.body;
+    console.log("payload grants", payload);
     if (req.files)
       for (const key in req.files) {
         const image = req.files[key][0];
@@ -17,6 +18,11 @@ exports.create = async (req, res, next) => {
     const rfaNo = randomize("Aa0", 10);
     payload = { ...payload, rfaNo };
     const grants = await Grant.create(payload);
+
+    // grants.draftPublish = true; // draft publish
+
+    await grants.save();
+    console.log("grantscreated", grants);
     return res.send({
       success: true,
       message: "Grant created successfully",
@@ -61,10 +67,9 @@ exports.edit = async (req, res, next) => {
 exports.list = async (req, res, next) => {
   try {
     let { all, page, limit } = req.query;
-
     const filter = {};
-    let { name, rfaNo, startDate, organizationId, categories } = req.query;
-    console.log("actual startDate", startDate);
+    let { name, rfaNo, startDate, endDate, organizationId, categories } =
+      req.query;
     if (name) {
       name = name.trim();
       filter.name = {
@@ -79,6 +84,11 @@ exports.list = async (req, res, next) => {
       filter.startDate = new Date(startDate);
       console.log("filter.startDate", filter.startDate);
     }
+
+    // if (endDate) {
+    //   filter.endDate = new Date(endDate);
+    //   console.log("filter.endDate", filter.endDate);
+    // }
     if (organizationId) {
       filter.organizationId = ObjectId(organizationId);
     }
@@ -87,35 +97,68 @@ exports.list = async (req, res, next) => {
     }
 
     page = page !== undefined && page !== "" ? parseInt(page) : 1;
+    console.log("page", page);
+
     if (!all)
       limit = limit !== undefined && limit !== "" ? parseInt(limit) : 10;
+    console.log("limit", limit);
 
     const total = await Grant.countDocuments({ filter });
-
+    console.log("total", total);
+    console.log("Math.ceil", Math.ceil(total / limit));
     if (page > Math.ceil(total / limit) && total > 0)
       page = Math.ceil(total / limit);
 
     let pipeline = [{ $match: filter }, { $sort: { createdAt: -1 } }];
-
+    console.log("pipeline", pipeline);
     if (!all) {
       pipeline.push({ $skip: limit * (page - 1) });
       pipeline.push({ $limit: limit });
     }
-
-    pipeline.push({
-      $project: {
-        _id: 1,
-        name: 1,
-        slug: 1,
-        image: 1,
-        status: 1,
-        createdAt: 1,
-        description: 1,
-      },
-    });
-
+    // pipeline.push({
+    //   $project: {
+    //     _id: 1,
+    //     name: 1,
+    //     image: 1,
+    //     startDate:1,
+    //     endDate:1,
+    //     status: 1,
+    //     createdAt: 1,
+    //   },
+    // });
     const grants = await Grant.aggregate(pipeline);
+    console.log("grants", grants);
+    var currentDate = new Date();
+    const length = Object.keys(grants).length;
+    console.log("length", length);
+    for (let i = 0; i < Object.keys(grants).length; i++) {
+      if (
+        grants[i]?.startDate <= currentDate &&
+        grants[i]?.endDate >= currentDate
+      ) {
 
+        console.log(i);
+        const obj = { grantStatus: "InProgress" };
+        grants.splice(i + 1, 0, obj);
+      }
+      if (
+        grants[i]?.startDate <= currentDate &&
+        grants[i]?.endDate <= currentDate
+      ) {
+        console.log(i);
+        const obj = { grantStatus: "Pending" };
+        grants.splice(i + 1, 0, obj);
+      }
+      if (
+        grants[i]?.startDate >= currentDate &&
+        grants[i]?.endDate >= currentDate
+      ) {
+        console.log(i);
+        const obj = { grantStatus: "Closed" };
+        grants.splice(i + 1, 0, obj);
+      }
+    }
+    console.log("grants", grants);
     return res.send({
       success: true,
       message: "Grant fetched successfully",
@@ -134,15 +177,18 @@ exports.list = async (req, res, next) => {
   }
 };
 
+// API - Get Particular Grant Details
 exports.get = async (req, res, next) => {
-  let { id } = req.params;
   try {
+    let { id } = req.params;
+    console.log("id", id);
     const grantDetail = await Grant.aggregate([
       {
         $match: {
           _id: mongoose.Types.ObjectId(id),
         },
       },
+
       {
         $lookup: {
           from: "organziations",
@@ -157,7 +203,6 @@ exports.get = async (req, res, next) => {
           preserveNullAndEmptyArrays: true,
         },
       },
-
       {
         $lookup: {
           from: "grantcategories",
@@ -170,6 +215,50 @@ exports.get = async (req, res, next) => {
         $unwind: {
           path: "$categories",
           preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          grantCustomFields: 1,
+          draftPublish: 1,
+          name: 1,
+          executiveSummary: 1,
+          eligibilityCriteria: 1,
+          submissionDeadline: 1,
+          questionsDeadline: 1,
+          startDate: 1,
+          durationTotal: 1,
+          maxBudget: 1,
+          endDate: 1,
+          image: 1,
+          rfaNo: 1,
+          grantName: "$grant.name",
+          websiteAboutOrganization: "$grant.websiteAboutOrganization",
+          serviceProvided: "$grant.serviceProvided",
+          walletAddress: "$grant.walletAddress",
+          logo: "$grant.logo",
+          categoryName: "$categories.name",
+          categoryDescription: "$categories.description",
+          categoryImage: "$categories.image",
+          // mongoose function
+          grantStatus: {
+            $function: {
+              body: function (startDate, endDate) {
+                var currentDate = new Date();
+                if (startDate <= currentDate && endDate >= currentDate) {
+                  return `InProgress`;
+                }
+                if (startDate <= currentDate && endDate <= currentDate) {
+                  return `Pending`;
+                }
+                if (startDate >= currentDate && endDate >= currentDate) {
+                  return `Closed`;
+                }
+              },
+              args: ["$startDate", "$endDate"],
+              lang: "js",
+            },
+          },
         },
       },
     ]);
@@ -196,4 +285,36 @@ exports.listActiveCategories = async (req, res, next) => {
   } catch (error) {
     return next(error);
   }
+};
+// API to fetch the Draft Grants schema.
+exports.getDraftGrants = async (req, res, next) => {
+  const fetchDraftGrants = await Grant.find({ published: false });
+  console.log("fetchDraftGrants", fetchDraftGrants);
+  return res.send({
+    success: true,
+    message: "Get Draft Grants Successfully",
+    fetchDraftGrants,
+  });
+};
+// API to fetch the publish Draft schema.
+exports.publishDraft = async (req, res, next) => {
+  let { id } = req.params;
+  console.log("id", id);
+  const publishDrafts = await Grant.findByIdAndUpdate(
+    id,
+    { published: true },
+    function (err, publishDraft) {
+      if (err) {
+        return res.json({ status: false, message: "Invalid request" });
+      } else {
+        console.log("Updated drafts : ", publishDraft);
+      }
+    }
+  );
+  console.log("publishDrafts", publishDrafts);
+  return res.send({
+    success: true,
+    message: "publish drafts Successfully",
+    publishDrafts,
+  });
 };

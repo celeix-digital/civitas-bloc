@@ -1,9 +1,14 @@
 const Organization = require("../../models/organization.model");
+const User = require("../../models/user.model");
+const OrganizationJoinInvite = require("../../models/organizationJoinInvite.model");
+const OrganizationJoinRequest = require("../../models/organizationJoinRequest.model");
+const UserOrganization = require("../../models/userOrganization.model");
 const ObjectId = require("mongoose").Types.ObjectId;
 const fs = require("fs");
 const { checkDuplicate } = require("../../../config/errors");
 const OrganizationType = require("../../models/organizationType.model");
 const mongoose = require("mongoose");
+const { sendEmail } = require("./../../utils/emails");
 
 // API to create Organization
 exports.create = async (req, res, next) => {
@@ -14,8 +19,12 @@ exports.create = async (req, res, next) => {
         const image = req.files[key][0];
         payload[`${key}`] = image.filename;
       }
+    // organizationCode
 
     const organization = await Organization.create(payload);
+    const organizationCode = randomize("Aa0", 6);
+    organization.organizationCode = organizationCode;
+    await organization.save();
     return res.send({
       success: true,
       message: "Organization created successfully",
@@ -80,9 +89,9 @@ exports.list = async (req, res, next) => {
     if (type) {
       filter.type = ObjectId(type);
     }
-    if (createdBy) {
-      filter.createdBy = ObjectId(createdBy);
-    }
+    // if (createdBy) {
+    //   filter.createdBy = ObjectId(createdBy);
+    // }
     if (zip) {
       filter.zip = zip;
     }
@@ -136,8 +145,8 @@ exports.get = async (req, res, next) => {
       },
       {
         $lookup: {
-          from: "users",
-          localField: "createdBy",
+          from: "organizationtypes", // users
+          localField: "type", // createdBy
           foreignField: "_id",
           as: "creator",
         },
@@ -156,15 +165,15 @@ exports.get = async (req, res, next) => {
           websiteAboutOrganization: 1,
           serviceProvided: 1,
           walletAddress: 1,
-          createdBy: 1,
           city: 1,
-          userName: "$creator.name",
+          organizationTypeName: "$creator.name",
+          status: "$creator.status",
         },
       },
     ]);
     return res.send({
       success: true,
-      message: "Get Organization Detail Successfully",
+      message: "Get particular Organization Detail Successfully",
       organizationDetail,
     });
   } catch (error) {
@@ -182,6 +191,207 @@ exports.listOrganizationTypes = async (req, res, next) => {
       success: true,
       message: "Active Organization Type listed successfully",
       activeTypes,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+exports.sendInvitationToUser = async (req, res, next) => {
+  try {
+    let { organizationId, userId } = req.body;
+    console.log(organizationId, userId);
+    const organization = await Organization.findOne({ _id: organizationId });
+    if (!organization) {
+      return res.json({ status: "Organization Not Exists!!" });
+    }
+    const organizationName = organization?.name;
+    console.log("organizationName", organizationName);
+    const user = await User.findOne({ _id: userId });
+    if (!user) {
+      return res.json({ status: "User Not Exists!!" });
+    }
+    const email = user.email;
+    let payload = req.body;
+    console.log("playload", payload);
+    const organizationJoinInvite = await OrganizationJoinInvite.create(payload);
+    console.log("organizationJoinInvite", organizationJoinInvite);
+    const link = `${process.env.BASE_URL}/v1/front/organizations/invitation-to-join-organization/${organizationId}/${userId}`; // change
+    console.log("link", link);
+    sendEmail(
+      email,
+      "invitation",
+      { email: email, organizationName: organizationName, url: link },
+      "Joining Organization Invitation"
+    );
+    return res.send({
+      status: true,
+      message: "Invitation to join Organization.",
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+exports.processOrganizationJoinRequest = async (req, res, next) => {
+  try {
+    console.log("req.params", req.body);
+    let { organizationId, userId, status } = req.body;
+    status = parseInt(status);
+    console.log(organizationId, userId, status);
+    const checkOrganizationRequest = await OrganizationJoinInvite.find({
+      organizationId: organizationId,
+      userId: userId,
+    });
+    console.log("checkOrganizationRequest", checkOrganizationRequest);
+    if (!checkOrganizationRequest) {
+      return res.json({ status: false, message: "Invalid request" });
+    }
+    const user = await User.findOne({ _id: userId });
+    if (!user) {
+      return res.json({ status: false, message: "Invalid request" });
+    }
+    console.log("user", user);
+    const email = user.email;
+    const userName = user.name;
+    console.log(email, userName);
+    checkOrganizationRequest.status = status;
+
+    const organization = await Organization.findOne({
+      _id: organizationId,
+    });
+    console.log("organization", organization);
+    if (!organization) {
+      return res.json({ status: false, message: "Invalid request" });
+    }
+    const organizationName = organization.name;
+    console.log("organizationName", organizationName);
+
+    // Those Users which have been approved by Organizations will shift to User Organization Schema
+    let payload = {
+      organizationId: organizationId,
+      userId: userId,
+    };
+    console.log("payload", payload);
+    if (status === 1) {
+      var userOrganization = await UserOrganization.create(payload);
+      await userOrganization.save();
+      console.log("userOrganization", userOrganization);
+    }
+
+    sendEmail(
+      email,
+      status === 1 ? "approved" : "rejected",
+      { email: email, userName: userName, organizationName: organizationName },
+      "Updated Processing Request"
+    );
+    if (status === 1) {
+      return res.send({
+        status: true,
+        message: "Thanks for joining organization.",
+      });
+    } else {
+      return res.send({
+        status: true,
+        message: " Not Approved.",
+      });
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
+
+exports.takeRequestsToJoinOrganization = async (req, res, next) => {
+  try {
+    console.log("req.params", req.params);
+    let { status } = req.params;
+    console.log("status", status);
+    status = parseInt(status);
+    const takeUserRequests = await OrganizationJoinRequest.find({
+      status: status,
+    });
+    console.log("takeUserRequests", takeUserRequests);
+    return res.send({
+      success: true,
+      message: "Get all User Requests to join organization",
+      takeUserRequests,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+exports.processUserJoinRequest = async (req, res, next) => {
+  try {
+    let { status, id } = req.body;
+    status = parseInt(status);
+    console.log(status);
+    console.log("request Id", id);
+    const organizationJoinRequest = await OrganizationJoinRequest.findOne({
+      _id: id,
+    });
+    if (!organizationJoinRequest) {
+      return res.json({ status: false, message: "Invalid request" });
+    }
+    const organizationsId = organizationJoinRequest.organizationId;
+
+    const organization = await Organization.findOne({
+      _id: organizationsId,
+    });
+    console.log("organization", organization);
+    if (!organization) {
+      return res.json({ status: false, message: "Invalid request" });
+    }
+
+    const organizationName = organization?.name;
+    console.log("organizationName", organizationName);
+    console.log("organizationId", organizationsId);
+    const userId = organizationJoinRequest.userId;
+    console.log("userId", userId);
+
+    // Those Users which have been approved by Organizations will shift to User Organization Schema
+    let payload = {
+      organizationId: organizationsId,
+      userId: userId,
+    };
+    console.log("payload", payload);
+    var userOrganization = await UserOrganization.create(payload);
+    console.log("userOrganization", userOrganization);
+    await userOrganization.save();
+    //
+    console.log("organizationJoinRequest", organizationJoinRequest);
+    const usersId = organizationJoinRequest.userId;
+    console.log("usersId", usersId);
+    const user = await User.findOne({ _id: usersId });
+    if (!user) {
+      return res.json({ status: false, message: "Invalid request" });
+    }
+    const email = user.email;
+    const userName = user.name;
+    console.log(email, userName);
+    const processUserRequest = await OrganizationJoinRequest.findByIdAndUpdate(
+      id,
+      { status: status },
+      function (err, processUser) {
+        if (err) {
+          return res.json({ status: false, message: "Invalid request" });
+        } else {
+          console.log("Updated request : ", processUser);
+        }
+      }
+    );
+    console.log("processUserRequest", processUserRequest);
+    sendEmail(
+      email,
+      "approvedUserRequest",
+      { email: email, organizationName: organizationName },
+      "Updated Processing Request"
+    );
+
+    return res.send({
+      status: true,
+      processUserRequest,
+      message: "User Request to join organization accepted",
     });
   } catch (error) {
     return next(error);

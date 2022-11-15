@@ -21,10 +21,14 @@ const UserSchema = new mongoose.Schema(
       minlength: 6,
       maxlength: 128,
     },
+    type: {
+      type: Number,
+    },
     image: { type: String },
     accessToken: { Type: String },
     forgotPasswordCode: { type: String },
     emailVerificationCode: { type: String },
+    organizationCode: { type: String },
     emailVerified: { type: String, default: "false" },
   },
   {
