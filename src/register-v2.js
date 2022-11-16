@@ -20,6 +20,12 @@ const postData = async (obj) => {
 };
 
 const getAccounts = async () => {
+  let magic = new Magic("pk_live_242B3D2FF05F08CD", {
+    network: "goerli",
+    extensions: [new MagicConnectExtension()],
+  });
+  let web3 = new Web3(magic.rpcProvider);
+  
   return await web3.eth
     .getAccounts()
     .then((accounts) => {
