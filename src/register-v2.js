@@ -1,4 +1,4 @@
-const url = "http://localhost:8080/v1/front/users/register";
+const url = "http://civitas-api.herokuapp.com/v1/front/users/register";
 
 const postData = async (obj) => {
   console.log("data", obj);
