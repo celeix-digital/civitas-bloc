@@ -27,7 +27,7 @@ const resetPasswordClickButton = (document.getElementById("resetPasswordClickBut
       errorMessageContainer.innerHTML = "Please provide all required values";
     return;
   }
-  let id="63760952d675263e3c65bc6a"
+  let id="6353b4b22c2cd200161878f9"
   let token="6V5r9Sykcj"
   let data = {
     id:id,

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+
+  </head>
+
+  <body>
+    <div id="errorMessageContainer"></div>
+    <div id="successMessageContainer"></div>
+    <div></div>
+    Name:
+    <input type="text" id="organizationNameInput" />
+    <br />
+    type:
+    <select name="selector" id="selector"> <!-- Use "select" to create object -->
+      <option>IMF</option> <!-- Add all applicable options -->
+      <option>United Nations</option>
+      <option>Type2</option>
+    </select>
+    <br />
+    
+    Website:
+    <input type="text" id="websiteAboutOrganizationInput" />
+    <br />
+    Service Provided:
+    <input type="text" id="serviceProvidedInput" />
+    <br />
+    Wallet Address:
+    <input type="text" id="walletAddressInput" />
+    <br />
+    logo:
+        <!-- <label for="userlogoInput">Choose logo</label> -->
+        <input
+          type="file"
+          accept="image/jpeg, image/png,image/jpg"
+          id="userlogoInput"
+        />
+        <br />
+    <!-- Organization Code:
+    <input type="text" id="organizationCodeInput" />
+    <br /> -->
+    Street1:
+    <input type="text" id="street1Input" />
+    <br />
+    Street2:
+    <input type="text" id="street2Input" />
+    <br />
+    City:
+    <input type="text" id="cityInput" />
+    <br />
+    state:
+    <input type="text" id="stateInput" />
+    <br />
+    zip:
+    <input type="text" id="zipInput" />
+    <br />
+    <button id="createOrganizationButton">Click</button>
+    <script src="../../src/organization/createOrganization.js"></script>
+  </body>
+</html>
+
