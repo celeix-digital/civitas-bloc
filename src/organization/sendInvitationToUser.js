@@ -1,4 +1,4 @@
-const url = 'http://localhost:8080/v1/front/organizations/send-invitation-to-user'
+const url = 'https://civitas-api.herokuapp.com/v1/front/organizations/send-invitation-to-user'
 const sendInvitationToUser = async obj => {
   console.log('url', url)
   console.log('obj', obj)

@@ -1,4 +1,4 @@
-let url = 'http://localhost:8080/v1/front/organizations/take-requests-to-join-organization'
+let url = 'https://civitas-api.herokuapp.com/v1/front/organizations/take-requests-to-join-organization'
 const takeUserRequestToJoinOrganization = async status => {
   console.log('url', url)
   console.log('status', status)
