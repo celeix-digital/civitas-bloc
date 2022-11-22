@@ -11,7 +11,6 @@ const postOrganizationData = async (obj) => {
       },
       body: JSON.stringify(obj),
     });
-    // console.log("response organization data", response);
     const createOrganization = await response.json();
     console.log("createOrganization", createOrganization);
     return createOrganization;
@@ -36,11 +35,9 @@ const postData = async data => {
         })
         .then(response => {
           if(response.ok) {
-            console.log('zain')
             return response.json();
           }
           else{
-            console.log('khakhi')
           }
         })
         console.log("response",response)
