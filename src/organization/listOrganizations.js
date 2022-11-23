@@ -1,13 +1,15 @@
-const url = 'https://civitas-api.herokuapp.com/v1/front/organizations/list'
+const url = 'https://civitas-api.herokuapp.com/v1/front/organizations/list?'
 const listOrganizationData = async obj => {
   console.log('url', url)
   try {
-    const response = await fetch(url, {
-      method: 'GET',
+    const response = await fetch(url+ new URLSearchParams({
+      walletAddress: 'MasterCard',
+      name:'IMF',
+       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
       }
-    }).then(response => {
+    })).then(response => {
       if (response.ok) {
         return response.json()
       } else {

@@ -3,11 +3,12 @@ const listGrantData = async obj => {
   console.log('url', url)
   try {
     const response = await fetch(url + new URLSearchParams({
-      rfaNo: 'mNyHWajnFC',
-      //  method: 'GET',
-      // headers: {
-      //   'Content-Type': 'application/json'
-      // }
+      rfaNo: 'EeDbX6AXQ2',
+      name:'grant1',
+       method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })).then(response => {
       if (response.ok) {
         return response.json()
@@ -19,7 +20,6 @@ const listGrantData = async obj => {
     return null
   }
 }
-
 const listGrantButton = (document.getElementById(
   'listGrantButton'
 ).onclick = async function () {
@@ -37,7 +37,7 @@ const listGrantButton = (document.getElementById(
   ,'endDate','durationTotal','published','fundingType','opportunityNumber','totalBudget','maximumAllowance','durationPeriod','organizationId','categories'
 ,'tags','maxBudget']; // table headers.
       let empTable = document.createElement('table');
-      empTable.className = 'organizationTable'
+      empTable.className = 'grantTable'
       let thead = document.createElement('thead');
       let createRow = document.createElement('tr');
       arrHead.forEach(header=>{
@@ -48,12 +48,12 @@ const listGrantButton = (document.getElementById(
       thead.append(createRow)
       empTable.append(thead)
       let createBody = document.createElement('tbody');
-      createBody.className = 'organizationData'
+      createBody.className = 'grantData'
       empTable.append(createBody)
       console.log(empTable)
       createDiv.append(empTable)
       console.log(createDiv)
-      if(data.length){
+      if(data){
       for (let i = 0; i < data.length; i++) {
          var getRow = document.createElement('tr'); // the header object.
         for(let j = 0 ; j < arrHead.length ; j++){

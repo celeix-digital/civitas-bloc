@@ -1,8 +1,9 @@
 const grantUrl = 'http://localhost:8080/v1/front/grants/create'
 var imageValue
 const postData = async (obj) => {
-  console.log("data", obj);
+  console.log("payload: ", obj);
   console.log("grantUrl", grantUrl);
+
   try {
     const response = await fetch(grantUrl, {
       method: "POST",
