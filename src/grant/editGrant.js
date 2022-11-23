@@ -1,19 +1,19 @@
-const grantUrl = 'http://localhost:8080/v1/front/grants/create'
+const grantUrl = 'http://localhost:8080/v1/front/grants/edit'
 var imageValue
-const postData = async (obj) => {
+const editData = async (obj) => {
   console.log("data", obj);
   console.log("grantUrl", grantUrl);
   try {
     const response = await fetch(grantUrl, {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(obj),
     });
-    const createGrant = await response.json();
-    console.log("createGrant", createGrant);
-    return createGrant;
+    const editGrant = await response.json();
+    console.log("editGrant", editGrant);
+    return editGrant;
   } catch (error) {
     return null;
   }
@@ -59,7 +59,7 @@ const addInputFields = (document.getElementById('add').onclick = async function 
 
 
 
-const createGrantButton = (document.getElementById('createGrantButton').onclick = async function () {
+const editGrantButton = (document.getElementById('editGrantButton').onclick = async function () {
   const grantNameInput = document.getElementById('grantNameInput')
   const executiveSummaryInput = document.getElementById('executiveSummaryInput')
   const eligibilityCriteriaInput = document.getElementById('eligibilityCriteriaInput')
@@ -187,13 +187,8 @@ const createGrantButton = (document.getElementById('createGrantButton').onclick 
   console.log(grantNameValue, executiveSummaryValue, eligibilityCriteriaValue, submissionDeadlineValue
     , questionsDeadlineValue, startDateValue, endDateValue, durationTotalValue, fundingTypeValue, opportunityNumberValue
     , totalBudgetValue, maximuAllowanceValue, durationPeriodValue, categoriesValue, organizationIdValue, tagsValue, maxBudgetValue, imageValue) // 👉️ "Initial value"
-  if (!grantNameValue || !imageValue || !submissionDeadlineValue || !questionsDeadlineValue || !startDateValue
-    || !endDateValue || !durationTotal || !maxBudgetValue) {
-    if (errorMessageContainer)
-      errorMessageContainer.innerHTML = "Please provide all required values";
-    return;
-  }
   let data = {
+    _id:'637df521fe3d8a0bc452c3db',
     name: grantNameValue,
     executiveSummary: executiveSummaryValue,
     eligibilityCriteria: eligibilityCriteriaValue,
@@ -215,7 +210,7 @@ const createGrantButton = (document.getElementById('createGrantButton').onclick 
     grantCustomFields: array
   }
   console.log('grants data', data)
-  let response = await postData(data)
+  let response = await editData(data)
   console.log("response", response)
   if (response && response.success) {
     if (successMessageContainer)
