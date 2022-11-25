@@ -74,7 +74,6 @@ const createOrganizationButton = (document.getElementById('createOrganizationBut
   const websiteAboutOrganizationValue = websiteAboutOrganizationInput.value
   const serviceProvidedValue = serviceProvidedInput.value
   const walletAddressValue = walletAddressInput.value
-
   const street1Value = street1Input.value
   const street2Value = street2Input.value
   const cityValue = cityInput.value

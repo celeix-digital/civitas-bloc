@@ -1,8 +1,6 @@
-let url = 'https://civitas-api.herokuapp.com/v1/front/grants/get'
-const getParticularGrant = async id => {
-    console.log('id', id)
+let url = 'https://civitas-api.herokuapp.com/v1/front/grants/get-draft-grants'
+const getdraftGrant = async obj => {
     console.log('url', url)
-    url = url + '/' + id
     try {
         const response = await fetch(url, {
             method: 'GET',
@@ -22,22 +20,20 @@ const getParticularGrant = async id => {
 }
 
 
-const getParticularGrantButton = (document.getElementById('getParticularGrantButton').onclick = async function () {
-    let id = "63738baf7ad17b0016417f49";
-    console.log("id", id);
-    let response = await getParticularGrant(id)
+const fetchDraftGrantButton = (document.getElementById('fetchDraftGrantButton').onclick = async function () {
+    let response = await getdraftGrant()
     console.log("response",response)
     if (response) {
-        var data = response.grantDetail[0]
+        var data = response.fetchDraftGrants
         console.log('data', data)
     }
     let arrHead = new Array();
     let createDiv = document.createElement('div')
     createDiv.className = 'getData'
     console.log('createDiv', createDiv)
-    arrHead = ['grantCustomFields', 'published', 'name', 'executiveSummary', 'eligibilityCriteria', 'submissionDeadline',
-        'questionsDeadline', 'startDate','durationTotal', 'maxBudget', 'endDate', 'image', 'rfaNo', 'grantName', 'websiteAboutOrganization',
-         'serviceProvided', 'walletAddress', 'logo','categoryName', 'categoryDescription', 'categoryImage'];
+    arrHead = ['name', 'rfaNo', 'executiveSummary', 'eligibilityCriteria','image','submissionDeadline','questionsDeadline','startDate'
+    ,'endDate','durationTotal','published','fundingType','opportunityNumber','totalBudget','maximumAllowance','durationPeriod','organizationId','categories'
+  ,'tags','maxBudget'];
     let empTable = document.createElement('table');
     empTable.className = 'grantTable'
     let thead = document.createElement('thead');
@@ -55,20 +51,24 @@ const getParticularGrantButton = (document.getElementById('getParticularGrantBut
     console.log(empTable)
     createDiv.append(empTable)
     console.log(createDiv)
-    var getRow = document.createElement('tr');
-    for (let j = 0; j < arrHead.length; j++) {
-        let td = document.createElement('td');
-        let h = arrHead[j]
-        console.log("data[h]: ",data[h])
-        td.innerText = data[h];
-        getRow.append(td)
-    }
-    console.log("getRow", getRow)
-    createBody.append(getRow)
-    console.log("createBody", createBody)
-    if (createDiv) {
-        document.getElementById('listOfGrant').appendChild(createDiv)
-    }
+    if(data){
+        for (let i = 0; i < data.length; i++) {
+           var getRow = document.createElement('tr'); // the header object.
+          for(let j = 0 ; j < arrHead.length ; j++){
+            let td = document.createElement('td'); 
+            let h = arrHead[j]
+            console.log(data[i][h])
+            td.innerText = data[i][h];
+            getRow.append(td)
+          }
+          console.log("getRow",getRow)
+          createBody.append(getRow)
+          console.log("createDiv",createDiv)
+          if(createDiv){
+            document.getElementById('fetchDraftGrant').appendChild(createDiv)
+          }
+        }
+      }
     console.log('response', response)
     if (response && response.success) {
         if (successMessageContainer)

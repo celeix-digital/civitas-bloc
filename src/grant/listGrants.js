@@ -1,4 +1,4 @@
-const url = 'http://localhost:8080/v1/front/grants/list?'
+const url = 'https://civitas-api.herokuapp.com/v1/front/grants/list?'
 const listGrantData = async obj => {
   console.log('url', url)
   try {
