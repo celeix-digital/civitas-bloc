@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+</head>
+
+<body>
+    <div id="errorMessageContainer"></div>
+    <div id="successMessageContainer"></div>
+    <div></div>
+    grantId:
+    <select name="grantId" id="grantId">
+        <option>Grant 1</option>
+        <option>Grant 2</option>
+        <option>grant1</option>
+        <option>Grant 3</option>
+        <option>ADSFFG</option>
+    </select>
+    <br />
+
+    applicantId:
+    <select name="applicantId" id="applicantId">
+        <option>zainabbas</option>
+    </select>
+    <br />
+
+    organizationId:
+    <select name="organizationId" id="organizationId">
+        <option>IMF</option>
+        <option>Org 2</option>
+    </select>
+    <br />
+
+
+    Multi-select Resources
+    <input type="file" id="grantimageInput" name="files" multiple="multiple">
+    <!-- <input mbsc-input id="my-input" data-dropdown="true" data-tags="true" /> -->
+    <!-- How many resources you want to create:
+    <input type="text" id="imageInputFields" />
+    <button  id="addResources">Add Resources</button>
+    <section id="listOfImageFields"></section>
+   
+    <br /> -->
+<br/>
+
+    How many input fields you want to add:
+    <input type="text" id="inputFields" />
+    <button id="add">Add input Fields</button>
+    <section id="listOfInputFields">
+    </section>
+
+    approvalAmount:
+    <input type="text" id="approvalAmountInput" />
+    <br />
+
+    applicationNumber:
+    <input type="text" id="applicationNumberInput" />
+    <br />
+
+    coverLetter:
+    <input type="text" id="coverLetterInput" />
+    <br />
+
+    grantDispatched:
+    <input type="text" id="grantDispatchedInput" />
+    <br />
+
+    grantApproved:
+    <input type="text" id="grantApprovedInput" />
+    <br />
+
+    status:
+    <input type="text" id="statusInput" />
+    <br />
+
+    <button id="createGrantApplicationButton">Create Grant Application</button>
+    <script src="../../src/grantApplication/createGrantApplication.js"></script>
+</body>
+
+</html>
