@@ -1,18 +1,36 @@
-const grantApplicationUrl = 'https://civitas-api.herokuapp.com/v1/front/grant-application/create'
+const grantApplicationUrl = 'http://localhost:8080/v1/front/grant-application/edit'
 var files;
-const postData = async (payload) => {
-    console.log("payload: ", payload);
-    console.log("grantApplicationUrl", grantApplicationUrl);
-    try {
-        const response = await fetch(grantApplicationUrl, {
-            method: "POST",
-            body: payload,
-        });
-        const createGrantApplication = await response.json();
-        console.log("createGrantApplication", createGrantApplication);
-        return createGrantApplication;
-    } catch (error) {
-        return null;
+const editData = async (payload) => {
+    if (payload instanceof FormData) {
+        console.log("payload formData: ", payload);
+        try {
+            const response = await fetch(grantApplicationUrl, {
+                method: "PUT",
+                body: payload,
+            });
+            const editGrantApplication = await response.json();
+            console.log("editGrantApplication", editGrantApplication);
+            return editGrantApplication;
+        } catch (error) {
+            return null;
+        }
+    }
+    else {
+        console.log("payload data: ", payload);
+        try {
+            const response = await fetch(grantApplicationUrl, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+            const editGrantApplication = await response.json();
+            console.log("editGrantApplication", editGrantApplication);
+            return editGrantApplication;
+        } catch (error) {
+            return null;
+        }
     }
 };
 const grantimageInput = document.getElementById('grantimageInput').addEventListener('change', event => {
@@ -50,7 +68,7 @@ const addInputFields = (document.getElementById('add').onclick = async function 
     document.getElementById('add').style.visibility = 'hidden';
 })
 
-const createGrantApplicationButton = (document.getElementById('createGrantApplicationButton').onclick = async function () {
+const editGrantApplicationButton = (document.getElementById('editGrantApplicationButton').onclick = async function () {
     const grantId = document.getElementById('grantId')
     const applicantId = document.getElementById('applicantId')
     const organizationId = document.getElementById('organizationId')
@@ -61,7 +79,6 @@ const createGrantApplicationButton = (document.getElementById('createGrantApplic
     const grantApprovedInput = document.getElementById('grantApprovedInput')
     const statusInput = document.getElementById('statusInput')
     const inputFields = document.getElementById('inputFields')
-
     if (inputFields.value > 0) {
         var divElem = document.getElementById("getInputFields");
         console.log('divElem', divElem)
@@ -118,32 +135,39 @@ const createGrantApplicationButton = (document.getElementById('createGrantApplic
         organizationIdValue = '6374757228887047dce60c85'
     }
 
+        var approvalAmountValue = approvalAmountInput.value
+        approvalAmountValue = parseInt(approvalAmountValue)
+    
+    if (coverLetterInput.value) {
+        var coverLetterValue = coverLetterInput.value
+    }
+    if (applicationNumberInput.value) {
+        var applicationNumberValue = applicationNumberInput.value
+    }
+ 
+        var grantDispatchedValue = grantDispatchedInput.value
+        grantDispatchedValue = parseInt(grantDispatchedValue)
+    
 
-    let approvalAmountValue = approvalAmountInput.value
-    approvalAmountValue = parseInt(approvalAmountValue)
-    let coverLetterValue = coverLetterInput.value
-    let applicationNumberValue = applicationNumberInput.value
-    let grantDispatchedValue = grantDispatchedInput.value
-    grantDispatchedValue = parseInt(grantDispatchedValue)
-    let grantApprovedValue = grantApprovedInput.value
-    grantApprovedValue = parseInt(grantApprovedValue)
-    let statusValue = statusInput.value
-    statusValue = parseInt(statusValue)
+        var grantApprovedValue = grantApprovedInput.value
+        grantApprovedValue = parseInt(grantApprovedValue)
+    
 
-
+        var statusValue = statusInput.value
+        statusValue = parseInt(statusValue)
+    
     console.log(grantIdValue, applicantIdValue, organizationIdValue, approvalAmountValue
         , coverLetterValue, applicationNumberValue, grantDispatchedValue, grantApprovedValue, statusValue, files) // 👉️ "Initial value"
-    if (!approvalAmountValue) {
-        if (errorMessageContainer)
-            errorMessageContainer.innerHTML = "Please provide all required values";
-        return;
-    }
-    const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-        formData.append('resources', files[i])
+
+    if (files) {
+        var formData = new FormData();
+        for (let i = 0; i < files.length; i++) {
+            formData.append('resources', files[i])
+        }
     }
 
     let data = {
+        _id: '6385d65f9f002353282e559b',
         grantId: grantIdValue,
         applicantId: applicantIdValue,
         organizationId: organizationIdValue,
@@ -156,21 +180,31 @@ const createGrantApplicationButton = (document.getElementById('createGrantApplic
         applicationCustomFields: JSON.stringify(array),
         resources: formData
     }
-    for (let key in data) {
-        formData.append(key, data[key])
+    if (files) {
+        for (let key in data) {
+            formData.append(key, data[key])
+        }
+        console.log('if files')
     }
     console.log('grant application data', data)
-    let response = await postData(formData)
+    if (files) {
+        console.log('formData', formData)
+        var response = await editData(formData)
+    }
+    else {
+        console.log(' data', data)
+        response = await editData(data)
+    }
     console.log("response", response)
     if (response && response.success) {
         if (successMessageContainer)
             successMessageContainer.innerHTML = response.message
-        if (approvalAmountValue.value) approvalAmountValue.value = ''
-        if (applicationNumberValue.value) applicationNumberValue.value = ''
-        if (coverLetterValue.value) coverLetterValue.value = ''
-        if (grantDispatchedValue.value) grantDispatchedValue.value = ''
-        if (grantApprovedValue.value) grantApprovedValue.value = ''
-        if (statusValue.value) statusValue.value = ''
+        if (approvalAmountValue) approvalAmountValue.value = ''
+        if (applicationNumberValue) applicationNumberValue.value = ''
+        if (coverLetterValue) coverLetterValue.value = ''
+        if (grantDispatchedValue) grantDispatchedValue.value = ''
+        if (grantApprovedValue) grantApprovedValue.value = ''
+        if (statusValue) statusValue.value = ''
     } else if (response && !response.success) {
         if (errorMessageContainer)
             errorMessageContainer.innerHTML = response.message
