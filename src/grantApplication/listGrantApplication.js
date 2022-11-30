@@ -1,15 +1,15 @@
-const url = 'http://localhost:8080/v1/front/grant-application/list'
+const url = 'https://civitas-api.herokuapp.com/v1/front/grant-application/list?'
 const listGrantApplicationsData = async obj => {
     console.log('url', url)
     try {
-        const response = await fetch(url ,{
-            //   rfaNo: 'EeDbX6AXQ2',
-            //   name:'grant1',
+        const response = await fetch(url + new URLSearchParams({
+            applicantId: '63760952d675263e3c65bc6a',
+            organizationId: '6358e249c267802df0900e6a',
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(response => {
+        })).then(response => {
             if (response.ok) {
                 return response.json()
             }
@@ -34,7 +34,7 @@ const listGrantApplicationButton = (document.getElementById(
     createDiv.className = 'grantApplicationData'
     console.log('createDiv', createDiv)
     arrHead = ['grantId', 'applicantId', 'organizationId', 'applicationCustomFields', 'approvalAmount', 'applicationNumber', 'coverLetter', 'grantDispatched'
-        , 'grantApproved', 'status','type','grantApplicationId','file','status','resources']; // table headers.
+        , 'grantApproved', 'status', 'type', 'grantApplicationId', 'file', 'status', 'resources']; // table headers.
     let empTable = document.createElement('table');
     empTable.className = 'grantApplicationTable'
     let thead = document.createElement('thead');

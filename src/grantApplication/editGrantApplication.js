@@ -1,4 +1,4 @@
-const grantApplicationUrl = 'http://localhost:8080/v1/front/grant-application/edit'
+const grantApplicationUrl = 'https://civitas-api.herokuapp.com/v1/front/grant-application/edit'
 var files;
 const editData = async (payload) => {
     if (payload instanceof FormData) {
