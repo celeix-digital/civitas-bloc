@@ -24,28 +24,32 @@ const editOrganizationTypeButton = (document.getElementById('editOrganizationTyp
 
     const organizationTypeNameValue = organizationTypeNameInput.value
     var statusValue = statusInput.value
-
-    // console.log('statusValue',statusValue)
     console.log('type of status', typeof statusValue)
+    console.log('statusValue', statusValue);
+
+
+    if (statusValue != 1 && statusValue != 0) {
+        if (errorMessageContainer)
+            errorMessageContainer.innerHTML = "Please enter value either 0 or 1";
+        return;
+    }
+
     if (statusValue && statusValue == 0) {
         console.log('zero')
-         statusValue = !Boolean(statusInput.value)
+        statusValue = !Boolean(statusInput.value)
     }
-    if (statusValue && statusValue == 1)  {
+    if (statusValue && statusValue == 1) {
         console.log('1')
         statusValue = Boolean(statusInput.value)
     }
-    // if(statusValue == ""){
-    //     statusValue = "0"
-    //     statusValue = !Boolean(statusValue)
-    // }
+
+    
     console.log(organizationTypeNameValue, statusValue) // 👉️ "Initial value"
     let data = {
-        _id:'6374e790bfcae50be4800733',
+        _id:'6388871cff2e21485c2c3d89',
         name: organizationTypeNameValue,
         status: statusValue,
     }
-    // console.log('type of status', typeof statusValue)
     console.log('edit organization Type data', data)
     let response = await postOrganizationTypeData(data)
     if (response && response.success) {

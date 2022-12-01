@@ -25,12 +25,18 @@ const createOrganizationTypeButton = (document.getElementById('createOrganizatio
     const organizationTypeNameValue = organizationTypeNameInput.value
     var statusValue = statusInput.value
 
-    console.log('statusValue',statusValue)
-    if (statusValue == 0) {
-        console.log('zero')
-         statusValue = !Boolean(statusInput.value)
+    console.log('statusValue', statusValue);
+    if (statusValue != 1 && statusValue != 0) {
+        if (errorMessageContainer)
+            errorMessageContainer.innerHTML = "Please enter value either 0 or 1";
+        return;
     }
-    else {
+
+    if (statusValue && statusValue == 0) {
+        console.log('zero')
+        statusValue = !Boolean(statusInput.value)
+    }
+    if (statusValue && statusValue == 1) {
         console.log('1')
         statusValue = Boolean(statusInput.value)
     }
