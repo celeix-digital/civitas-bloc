@@ -19,7 +19,6 @@ const postgrantCategoryData = async (obj) => {
     }
 };
 
-
 const grantCategoryimageInput = document.getElementById('grantCategoryimageInput').addEventListener('change', event => {
     const target = event.target
     console.log('target', target)
