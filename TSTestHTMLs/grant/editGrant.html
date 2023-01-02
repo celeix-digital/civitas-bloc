@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+
+  <body>
+    <div id="errorMessageContainer"></div>
+    <div id="successMessageContainer"></div>
+    <div></div>
+    Name:
+    <input type="text" id="grantNameInput" />
+    <br />
+    executiveSummary:
+    <input type="text" id="executiveSummaryInput" />
+    <br />
+    eligibilityCriteria:
+    <input type="text" id="eligibilityCriteriaInput" />
+    <br />  
+    submissionDeadline:
+    <input type="text" id="submissionDeadlineInput" />
+    <br />
+    questionsDeadline:
+    <input type="text" id="questionsDeadlineInput" />
+    <br />
+    startDate:
+    <input type="text" id="startDateInput" />
+    <br />
+    endDate:
+    <input type="text" id="endDateInput" />
+    <br />
+    durationTotal:
+    <input type="text" id="durationTotalInput" />
+    <br />
+    image:
+        <input
+          type="file"
+          accept="image/jpeg, image/png,image/jpg"
+          id="userimageInput"
+        />
+        <br />
+        fundingType:
+        <select name="fundingType" id="fundingType">
+          <option>Cooperative Agreement</option> 
+          <option>Grant</option>
+          <option>Other</option>
+          <option>Procurement Contract</option>
+          <option>CA</option>
+          <option>G</option>
+        </select>
+        <br />
+
+        opportunityNumber:
+        <select name="opportunityNumber" id="opportunityNumber">
+            <option>Forcasted</option> 
+            <option>Posted</option>
+            <option>Closed</option>
+            <option>Archived</option>
+          </select>
+          <br />
+
+          How many input fields you want to add:
+          <input type="text" id="inputFields"/>
+          <button  id="add">Add input Fields</button>
+          <section id="listOfInputFields">
+          </section>
+
+
+          totalBudget:
+          <input type="text" id="totalBudgetInput" />
+           <br />
+
+           maximumAllowance:
+           <input type="text" id="maximuAllowanceInput" />
+           <br />
+
+           durationPeriod:
+           <input type="text" id="durationPeriodInput" />
+           <br />
+
+           organizationId:
+           <select name="organizationId" id="organizationId">
+            <option>IMF</option> 
+            <option>Org 2</option>
+          </select>
+          <br />
+          categories:
+          <select name="categories" id="categories">
+            <option>Grant 1</option> 
+            <option>Grant 2</option>
+          </select>
+          <br />
+          tags:
+          <input type="text" id="tagsInput" />
+          <br />
+          maxBudget:
+          <input type="text" id="maxBudgetInput" />
+          <br />
+    <button id="editGrantButton">Edit Grant</button>
+    <script src="https://res.cloudinary.com/dkqr1pdbt/raw/upload/v1669211862/civitas/editGrant_qq6x10.js"></script>
+  </body>
+</html>
+

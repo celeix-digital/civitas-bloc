@@ -42,7 +42,6 @@ const registerClickButton = (document.getElementById(
   console.log("accounts", accounts);
   const userNameInput = document.getElementById("userNameInput");
   const userEmailInput = document.getElementById("userEmailInput");
-  const userWalletInput = document.getElementById("userWalletInput");
   const userPasswordInput = document.getElementById("userPasswordInput");
   const userNameValue = userNameInput.value;
   const userEmailValue = userEmailInput.value;
