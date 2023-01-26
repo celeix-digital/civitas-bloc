@@ -1,9 +1,9 @@
-const url = "https://civitas-api.herokuapp.com/v1/front/users/register";
+const civitas_api_url = "https://civitas-api.herokuapp.com/v1/front/users/register";
 
 const postData = async (obj) => {
   console.log("data", obj);
   try {
-    const response = await fetch(url, {
+    const response = await fetch(civitas_api_url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

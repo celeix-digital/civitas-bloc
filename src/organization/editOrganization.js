@@ -5,7 +5,7 @@ const editOrganizationData = async obj => {
   console.log('data', obj)
   try {
     const response = await fetch(organizationUrl, {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'
       },

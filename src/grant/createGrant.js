@@ -52,12 +52,10 @@ const addInputFields = (document.getElementById('add').onclick = async function 
   }
   br = document.createElement("br");
   createDiv.append(br)
-
   console.log('createDiv', createDiv)
   document.getElementById('listOfInputFields').appendChild(createDiv)
   document.getElementById('add').style.visibility = 'hidden';
 })
-
 
 
 const createGrantButton = (document.getElementById('createGrantButton').onclick = async function () {
@@ -81,7 +79,6 @@ const createGrantButton = (document.getElementById('createGrantButton').onclick 
   const maxBudget = document.getElementById('maxBudgetInput')
 
   if (inputFields.value > 0) {
-    console.log('Hello')
     var divElem = document.getElementById("getInputFields");
     console.log('divElem', divElem)
     var inputElements = divElem.querySelectorAll("input");

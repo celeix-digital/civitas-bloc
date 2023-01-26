@@ -60,7 +60,7 @@ const userlogoInput = document.getElementById('userlogoInput').addEventListener(
   })
 const createOrganizationButton = (document.getElementById('createOrganizationButton').onclick = async function () {
   const organizationNameInput = document.getElementById('organizationNameInput')
-  const types = document.getElementById('selector')
+  const types = document.getElementById('selector') //
   const websiteAboutOrganizationInput = document.getElementById('websiteAboutOrganizationInput')
   const serviceProvidedInput = document.getElementById('serviceProvidedInput')
   const walletAddressInput = document.getElementById('walletAddressInput')
