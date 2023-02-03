@@ -1,5 +1,5 @@
 const organization_type_url = 'https://civitas-api.herokuapp.com/v1/admin/organizations/type/list'
-const register_user_with_organization_url = 'https://civitas-api.herokuapp.com/v1/front/organizations/register-user-with-organization'
+const register_user_with_organization_url = 'http://localhost:8081/v1/front/organizations/register-user-with-organization'
 const postData = async (obj) => {
   console.log("data", obj);
   try {
@@ -146,7 +146,7 @@ const loadOrganizationTypes = async () => {
     let data = response.data.organizationTypes;
     console.log("list organization types", data);
 
-    console.log("Hello zain")
+    
     let listOrganizationTypeHtml = '';
     listOrganizationTypeHtml += `<select id="orgType-2" name="orgType" data-name="orgType" class="form-input w-select">` + `
        <option>Select one...</option>`
@@ -168,18 +168,4 @@ window.onload = function () {
 
   const registerClickButton = document.getElementById("registerClickButton");
   registerClickButton.addEventListener("click", registerButton);
-  // console.log("gu-button", document.getElementsByClassName("gu-button"))
-  // const createWalletButton = document.getElementsByClassName("gu-button");
-  // console.log("createWalletButton", createWalletButton)
-  // createWalletButton.addEventListener('click', async (event) => {
-  //   console.log("event dispatched", event)
-  //   createWallet()
-  // })
-  // console.log("buttonRow", document.getElementsByClassName("button-row"))
-  // const registerClickButton = document.getElementsByClassName("button-row");
-  // console.log("registerClickButton", registerClickButton)
-  // registerClickButton.addEventListener('click', async (event) => {
-  //   console.log("event dispatched", event)
-  //   registerButton()
-  // })
 }
