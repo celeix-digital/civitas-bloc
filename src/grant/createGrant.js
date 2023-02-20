@@ -1,3 +1,31 @@
+const contractAddress = "0x27475ae8eb02b7da4261c843586b81622a689e50";
+const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"string","name":"text","type":"string"}],"name":"AgencyAdded","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"string","name":"text","type":"string"}],"name":"GrantCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"string","name":"text","type":"string"}],"name":"GrantUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"string","name":"text","type":"string"}],"name":"OrgAdded","type":"event"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"AllAgency","outputs":[{"internalType":"bytes32","name":"id","type":"bytes32"},{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"balance","type":"uint256"},{"internalType":"uint256","name":"NoOfGrants","type":"uint256"},{"internalType":"bytes32","name":"InfoLink","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"name":"AllGrant","outputs":[{"internalType":"bytes32","name":"id","type":"bytes32"},{"internalType":"bytes32","name":"agencyId","type":"bytes32"},{"internalType":"address","name":"Approver","type":"address"},{"internalType":"uint256","name":"Budget","type":"uint256"},{"internalType":"address","name":"Creator","type":"address"},{"internalType":"bool","name":"Approved","type":"bool"},{"internalType":"bytes32","name":"InfoLink","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"name":"AllGrantSpent","outputs":[{"internalType":"bytes32","name":"grantId","type":"bytes32"},{"internalType":"bytes32","name":"orgId","type":"bytes32"},{"internalType":"uint256","name":"Balance","type":"uint256"},{"internalType":"uint256","name":"TotalBudgetAppointed","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"AllOrganization","outputs":[{"internalType":"bytes32","name":"id","type":"bytes32"},{"internalType":"bytes32","name":"InfoLink","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_agencyAddress","type":"address"},{"internalType":"bytes32","name":"_id","type":"bytes32"},{"internalType":"address","name":"_owner","type":"address"},{"internalType":"uint256","name":"_balance","type":"uint256"},{"internalType":"uint256","name":"_noOfGrants","type":"uint256"},{"internalType":"bytes32","name":"_infoLink","type":"bytes32"}],"name":"addAgency","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"id","type":"bytes32"},{"internalType":"bytes32","name":"agencyId","type":"bytes32"},{"internalType":"address","name":"Approver","type":"address"},{"internalType":"uint256","name":"Budget","type":"uint256"},{"internalType":"address","name":"Creator","type":"address"},{"internalType":"bool","name":"Approved","type":"bool"},{"internalType":"bytes32","name":"InfoLink","type":"bytes32"}],"name":"addGrant","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_owner","type":"address"},{"internalType":"bytes32","name":"_id","type":"bytes32"},{"internalType":"bytes32","name":"_infoLink","type":"bytes32"}],"name":"addOrg","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_agencyAddress","type":"address"},{"internalType":"bytes32","name":"_id","type":"bytes32"},{"internalType":"address","name":"_owner","type":"address"},{"internalType":"uint256","name":"_balance","type":"uint256"},{"internalType":"uint256","name":"_noOfGrants","type":"uint256"},{"internalType":"bytes32","name":"_infoLink","type":"bytes32"}],"name":"updateGrantSpent","outputs":[],"stateMutability":"nonpayable","type":"function"}]
+
+async function onInit(grantId,totalBudget) {
+  await window.ethereum.enable();
+  const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+  console.log('accounts',accounts)
+  const account = accounts[0];
+  console.log('account',account);
+  const web3 = new Web3(window.ethereum)
+  grantId = "0x" + grantId
+  totalBudget = "0x" + totalBudget
+  const celiexContract = new web3.eth.Contract(contractABI, contractAddress)
+  // '0x11111111111111111111111111'
+  // '123444444'
+  celiexContract.methods
+  .addGrant(grantId, '0x11111111111111111111111', '0x7Eb0156eF2b1d3545c8684d9eb005207Aaa723B7', totalBudget, '0x7Eb0156eF2b1d3545c8684d9eb005207Aaa723B7', false, '0x1111111')
+  .send({ from: account }, function (err, res) {
+    if (err) {
+      console.log("An error occurred", err)
+      return
+    }
+    console.log("Hash of the transaction: " + res)
+  })
+}
+
+
+
 const creategrantUrl = 'https://civitas-api.herokuapp.com/v1/front/grants/create'
 var eligibleEntityTypes = []
 
@@ -24,6 +52,7 @@ const postData = async (obj) => {
 
 
 const submitReview = async () => {
+
   const grantNameInput = document.getElementById("grantNameInput");
   const opportunityNumberInput = document.getElementById("oppNumberInput");
   const grantCategoryInput = document.getElementById("oppCategory");
@@ -64,7 +93,15 @@ const submitReview = async () => {
   };
   console.log("data", data)
     let response = await postData(data);
+    if (response && response.success) {
+      const getGrantId = response.grants._id;
+      console.log("getGrantId", getGrantId)
+      const totalBudget = response.grants.totalBudget;
+      console.log("totalBudget", totalBudget)
+    onInit(getGrantId,totalBudget);
+    }
    console.log("response", response)
+   console.log("response web3 data", response.data)
    if (response && response.success) {
    if (grantNameInput.value) grantNameInput.value = "";
    if (opportunityNumberInput.value) opportunityNumberInput.value = "";
@@ -109,6 +146,7 @@ const listGrantCategories = async () => {
 
 
 window.onload = function () {
+  // onInit();
   listGrantCategories()
 
   function MaptoNumber(name) {
