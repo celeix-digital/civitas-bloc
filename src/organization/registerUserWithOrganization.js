@@ -1,7 +1,8 @@
 const organization_type_url = 'https://civitas-api.herokuapp.com/v1/admin/organizations/type/list'
-const register_user_with_organization_url = 'http://localhost:8081/v1/front/organizations/register-user-with-organization'
+const register_user_with_organization_url = 'https://civitas-api.herokuapp.com/v1/front/organizations/register-user-with-organization'
+var wallet;
 const postData = async (obj) => {
-  console.log("data", obj);
+  console.log("data post", obj);
   try {
     const response = await fetch(register_user_with_organization_url, {
       method: "POST",
@@ -10,9 +11,8 @@ const postData = async (obj) => {
       },
       body: JSON.stringify(obj),
     });
-    console.log("response data", response);
+   
     const registerUserWithOrganization = await response.json();
-    console.log("registerUserWithOrganization", registerUserWithOrganization);
     return registerUserWithOrganization;
   } catch (error) {
     return null;
@@ -39,13 +39,25 @@ const createWallet = async () => {
   const accounts = await getAccounts();
   console.log("accounts wallet address", accounts);
   document.getElementById("userWalletAddress").value = accounts[0];
-  var wallet = accounts[0]
+   wallet = accounts[0]
   console.log("wallet", wallet)
-  const nextData = document.getElementsByClassName("button-secondary")[1]
-  console.log("after",document.getElementsByClassName("button-secondary")[1])
 }
 
-const registerButton = async() => {
+const registerButton = async () => {
+  Toastify({
+    text: "Your form has been submitted. Please wait while your user and organization is created.",
+    duration: 1000,   
+     close: true,
+    style: {
+      height:"50px",
+      backgroundColor:"red",
+      fontsize: "15px",
+      color:"white"
+    },
+    onClick: function(){}
+  }).showToast();
+
+
   const userNameInput = document.getElementById("userNameInput");
   const userEmailInput = document.getElementById("userEmailInput");
   const userPasswordInput = document.getElementById("userPasswordInput");
@@ -63,12 +75,13 @@ const registerButton = async() => {
   const organizationWebsiteInput = document.getElementById("orgWebsite")
   const organizationPhoneInput = document.getElementById("orgPhone")
   const userWalletAddressInput = document.getElementById("userWalletAddress")
+
   const userNameValue = userNameInput.value;
   const userEmailValue = userEmailInput.value;
   const userPasswordValue = userPasswordInput.value;
-  const organizationNameValue = organizationNameInput.value;
+  const organizationNameValue = organizationNameInput.value
   const organizationTypeValue = organizationTypeInput.value
-  const organizationRoleValue = organizationRoleInput.value;
+  const organizationRoleValue = organizationRoleInput.value
   const streetAddressValue = streetAddressInput.value
   const streetAddress2Value = streetAddress2Input.value
   const organizationCityValue = organizationCityInput.value
@@ -80,17 +93,17 @@ const registerButton = async() => {
   const organizationWebsiteValue = organizationWebsiteInput.value
   const organizationPhoneValue = organizationPhoneInput.value
   const userWalletAddressValue = userWalletAddressInput.value
-  console.log("userWalletAddressValue length", userWalletAddressValue.length)
   console.log(userNameValue, userEmailValue, userPasswordValue, organizationNameValue, organizationTypeValue, organizationRoleValue,
     streetAddressValue, streetAddress2Value, organizationCityValue, organizationStateValue, organizationZipValue
     , serviceProvidedValue, organizationLogoValue, organizationFormValue, organizationWebsiteValue
-    , organizationPhoneValue, userWalletAddressValue); // 👉️ "Initial value"
+    , organizationPhoneValue, userWalletAddressValue); 
   let data = {
-    userName: userNameValue,
+    name:userNameValue,
+    name: userNameValue,
     email: userEmailValue,
-    wallet: userWalletAddressValue && userWalletAddressValue.length == 42 ? userWalletAddressValue : wallet,
+    wallet: userWalletAddressValue ? userWalletAddressValue : wallet,
     password: userPasswordValue,
-    name: organizationNameValue,
+    organizationName: organizationNameValue,
     type: organizationTypeValue,
     role: organizationRoleValue,
     street1: streetAddressValue,
@@ -104,9 +117,57 @@ const registerButton = async() => {
     websiteAboutOrganization: organizationWebsiteValue,
     phone: organizationPhoneValue
   };
-  console.log("data", data)
-   let response = await postData(data);
-   console.log("response", response)
+  console.log("data...", data)
+  console.log('check wallet',wallet)
+  if(!data.wallet){
+    Toastify({
+      text: "Please add wallet address",
+      duration: 3000,   
+       close: true,
+      style: {
+         height:"50px",
+        backgroundColor:"red",
+        fontsize: "15px",
+        color:"white"
+      },
+      onClick: function(){}
+    }).showToast();
+    return;
+  }
+
+  let response = await postData(data);
+  console.log("after hit api data...", response)
+  if(response.success){
+    Toastify({
+      text: response.message,
+      duration: 3000,
+      destination: response.txLink,
+      newWindow: true,
+      close: true,
+      gravity: "top", 
+      position: "right", 
+      stopOnFocus: true, 
+      style: {
+        background: "linear-gradient(to right, #00b09b, #96c93d)",
+      },
+      onClick: function(){} 
+    }).showToast();
+  }
+  else{
+    console.log("response back",response.name,response.email,response.password)
+    Toastify({
+      text: response.message,
+      duration: 4000,   
+       close: true,
+      style: {
+         height:"50px",
+        backgroundColor:"red",
+        fontsize: "15px",
+        color:"white"
+      },
+      onClick: function(){}
+    }).showToast();
+  }
   if (response && response.success) {
     if (userNameInput.value) userNameInput.value = "";
     if (userEmailInput.value) userEmailInput.value = "";
@@ -125,17 +186,16 @@ const registerButton = async() => {
     if (organizationWebsiteInput.value) organizationWebsiteInput.value = "";
     if (organizationPhoneInput.value) organizationPhoneInput.value = "";
     if (userWalletAddressInput.value) userWalletAddressInput.value = "";
+    wallet=""
   }
 }
-
-// wallet address = 0x870Df756336063848603D68FB169f505278f86f9
 const loadOrganizationTypes = async () => {
   console.log('organization_type_url', organization_type_url)
   try {
     const response = await fetch(organization_type_url, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       }
     }).then(response => {
       if (response.ok) {
@@ -144,9 +204,8 @@ const loadOrganizationTypes = async () => {
     })
     console.log('response', response)
     let data = response.data.organizationTypes;
-    console.log("list organization types", data);
 
-    
+
     let listOrganizationTypeHtml = '';
     listOrganizationTypeHtml += `<select id="orgType-2" name="orgType" data-name="orgType" class="form-input w-select">` + `
        <option>Select one...</option>`
@@ -155,7 +214,6 @@ const loadOrganizationTypes = async () => {
         `<option value=${listorganizationType._id}>` + listorganizationType.name + `</option>`;
     });
     listOrganizationTypeHtml += `</select>`;
-    console.log("listOrganizationTypeHtml", listOrganizationTypeHtml)
     document.getElementsByClassName('form-field-wrapper')[4].innerHTML = listOrganizationTypeHtml;
   } catch (error) {
     return null
@@ -165,7 +223,7 @@ window.onload = function () {
   loadOrganizationTypes();
   const createWalletButton = document.getElementById("createWalletButton");
   createWalletButton.addEventListener("click", createWallet);
-
   const registerClickButton = document.getElementById("registerClickButton");
   registerClickButton.addEventListener("click", registerButton);
 }
+

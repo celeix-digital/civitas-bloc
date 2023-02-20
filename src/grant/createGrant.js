@@ -74,7 +74,6 @@ const submitReview = async () => {
    if (awardCeilingInput.value) awardCeilingInput.value = "";
    if (awardFloorValue.value) awardFloorValue.value = "";
    if (reportingDetailsValue.value) reportingDetailsValue.value = "";
-  // if (organizationCityInput.value) organizationCityInput.value = "";
      }
 }
 
@@ -101,7 +100,6 @@ const listGrantCategories = async () => {
         `<option value=${grantCategories._id}>` + grantCategories.name + `</option>`;
     });
     grantCategoriesHtml += `</select>`;
-    console.log("listOrganizationTypeHtml", grantCategoriesHtml)
     document.getElementsByClassName('form-field-wrapper')[2].innerHTML = grantCategoriesHtml;
 
   } catch (err) {
