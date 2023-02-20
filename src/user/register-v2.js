@@ -38,23 +38,24 @@ const getAccounts = async () => {
 const registerClickButton = (document.getElementById(
   "registerClickButton"
 ).onclick = async function () {
-  const accounts = await getAccounts();
-  console.log("accounts", accounts);
+  // const accounts = await getAccounts();
+  // console.log("accounts", accounts);
   const userNameInput = document.getElementById("userNameInput");
   const userEmailInput = document.getElementById("userEmailInput");
   const userPasswordInput = document.getElementById("userPasswordInput");
+  const userWalletAddress = document.getElementById("userWalletAddress");
   const userNameValue = userNameInput.value;
   const userEmailValue = userEmailInput.value;
   const userPasswordValue = userPasswordInput.value;
-  console.log(userNameValue, userEmailValue, userPasswordValue); // 👉️ "Initial value"
-  if (!userNameValue || !userEmailValue || !userPasswordValue) {
+  console.log(userNameValue, userEmailValue, userPasswordValue); // ðŸ‘‰ï¸ "Initial value"
+  if (!userNameValue || !userEmailValue || !userPasswordValue || !userWalletAddress) {
     if (errorMessageContainer)
       errorMessageContainer.innerHTML = "Please provide all required values";
     return;
   }
   let data = {
     name: userNameValue,
-    wallet: accounts[0],
+    wallet: userWalletAddress,
     email: userEmailValue,
     password: userPasswordValue,
   };
@@ -71,4 +72,13 @@ const registerClickButton = (document.getElementById(
     if (errorMessageContainer)
       errorMessageContainer.innerHTML = response.message;
   }
+});
+
+const createWalletButton = (document.getElementById(
+  "createWalletButton"
+).onclick = async function () {
+  const accounts = await getAccounts();
+  console.log("accounts", accounts);
+  const userNameInput = document.getElementById("userWalletAddress");
+  userNameInput.value = accounts;
 });
