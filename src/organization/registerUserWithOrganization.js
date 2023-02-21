@@ -137,6 +137,28 @@ const registerButton = async () => {
 
   let response = await postData(data);
   console.log("after hit api data...", response)
+
+
+  // if (response && response.code === 500) {
+  //   console.log('code')
+  //   Toastify({
+  //     text: response.message,
+  //     duration: 4000,
+  //     newWindow: true,
+  //     close: true,
+  //     gravity: "top",
+  //     position: "right",
+  //     stopOnFocus: true,
+  //     style: {
+  //       background: "red",
+  //     },
+  //     onClick: function () { }
+  //   }).showToast();
+  //   return;
+  // }
+
+
+
   if(response.success){
     Toastify({
       text: response.message,
