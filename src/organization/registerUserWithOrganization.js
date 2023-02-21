@@ -50,7 +50,7 @@ const registerButton = async () => {
      close: true,
     style: {
       height:"50px",
-      backgroundColor:"red",
+      backgroundColor:"blue",
       fontsize: "15px",
       color:"white"
     },
@@ -160,10 +160,7 @@ const registerButton = async () => {
       duration: 4000,   
        close: true,
       style: {
-         height:"50px",
-        backgroundColor:"red",
-        fontsize: "15px",
-        color:"white"
+        background: "red",
       },
       onClick: function(){}
     }).showToast();
