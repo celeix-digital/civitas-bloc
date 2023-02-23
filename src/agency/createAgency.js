@@ -49,7 +49,7 @@ const registerButton = async () => {
     duration: 1000,   
      close: true,
      style: {
-      background: "blue",
+      background: "#416ab3",
     },
     onClick: function(){}
   }).showToast();
@@ -119,7 +119,7 @@ const registerButton = async () => {
       duration: 3000,   
        close: true,
       style: {
-        background: "red",
+        background: "#FF7002",
       },
       onClick: function(){}
     }).showToast();
@@ -142,7 +142,7 @@ const registerButton = async () => {
       position: "right", 
       stopOnFocus: true, 
       style: {
-        background: "linear-gradient(to right, #00b09b, #96c93d)",
+        background: "green",
       },
       onClick: function(){} 
     }).showToast();
@@ -153,7 +153,7 @@ const registerButton = async () => {
       duration: 4000,   
        close: true,
       style: {
-        background: "red",
+        background: "#FF7002",
       },
       onClick: function(){}
     }).showToast();
