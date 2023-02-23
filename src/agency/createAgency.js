@@ -48,11 +48,8 @@ const registerButton = async () => {
     text: "Your form has been submitted. Please wait while your user and agency is created.",
     duration: 1000,   
      close: true,
-    style: {
-      height:"50px",
-      backgroundColor:"blue",
-      fontsize: "15px",
-      color:"white"
+     style: {
+      background: "blue",
     },
     onClick: function(){}
   }).showToast();
