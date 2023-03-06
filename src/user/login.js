@@ -1,4 +1,4 @@
-const civitas_api_url = "https://civitas-api.herokuapp.com/v1/front/users/login";
+const civitas_api_url = "https://civitas-api.arhamsoft.org/v1/front/users/login";
 const postData = async (obj) => {
   console.log("data", obj);
   try {

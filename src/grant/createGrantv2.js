@@ -1,8 +1,9 @@
 const contractAddress = "0x27475ae8eb02b7da4261c843586b81622a689e50";
+var token;
+var message;
 const contractABI = [{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "text", "type": "string" }], "name": "AgencyAdded", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "text", "type": "string" }], "name": "GrantCreated", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "text", "type": "string" }], "name": "GrantUpdated", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "text", "type": "string" }], "name": "OrgAdded", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "AllAgency", "outputs": [{ "internalType": "bytes32", "name": "id", "type": "bytes32" }, { "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "uint256", "name": "balance", "type": "uint256" }, { "internalType": "uint256", "name": "NoOfGrants", "type": "uint256" }, { "internalType": "bytes32", "name": "InfoLink", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "name": "AllGrant", "outputs": [{ "internalType": "bytes32", "name": "id", "type": "bytes32" }, { "internalType": "bytes32", "name": "agencyId", "type": "bytes32" }, { "internalType": "address", "name": "Approver", "type": "address" }, { "internalType": "uint256", "name": "Budget", "type": "uint256" }, { "internalType": "address", "name": "Creator", "type": "address" }, { "internalType": "bool", "name": "Approved", "type": "bool" }, { "internalType": "bytes32", "name": "InfoLink", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "name": "AllGrantSpent", "outputs": [{ "internalType": "bytes32", "name": "grantId", "type": "bytes32" }, { "internalType": "bytes32", "name": "orgId", "type": "bytes32" }, { "internalType": "uint256", "name": "Balance", "type": "uint256" }, { "internalType": "uint256", "name": "TotalBudgetAppointed", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "AllOrganization", "outputs": [{ "internalType": "bytes32", "name": "id", "type": "bytes32" }, { "internalType": "bytes32", "name": "InfoLink", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_agencyAddress", "type": "address" }, { "internalType": "bytes32", "name": "_id", "type": "bytes32" }, { "internalType": "address", "name": "_owner", "type": "address" }, { "internalType": "uint256", "name": "_balance", "type": "uint256" }, { "internalType": "uint256", "name": "_noOfGrants", "type": "uint256" }, { "internalType": "bytes32", "name": "_infoLink", "type": "bytes32" }], "name": "addAgency", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "id", "type": "bytes32" }, { "internalType": "bytes32", "name": "agencyId", "type": "bytes32" }, { "internalType": "address", "name": "Approver", "type": "address" }, { "internalType": "uint256", "name": "Budget", "type": "uint256" }, { "internalType": "address", "name": "Creator", "type": "address" }, { "internalType": "bool", "name": "Approved", "type": "bool" }, { "internalType": "bytes32", "name": "InfoLink", "type": "bytes32" }], "name": "addGrant", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_owner", "type": "address" }, { "internalType": "bytes32", "name": "_id", "type": "bytes32" }, { "internalType": "bytes32", "name": "_infoLink", "type": "bytes32" }], "name": "addOrg", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "owner", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_agencyAddress", "type": "address" }, { "internalType": "bytes32", "name": "_id", "type": "bytes32" }, { "internalType": "address", "name": "_owner", "type": "address" }, { "internalType": "uint256", "name": "_balance", "type": "uint256" }, { "internalType": "uint256", "name": "_noOfGrants", "type": "uint256" }, { "internalType": "bytes32", "name": "_infoLink", "type": "bytes32" }], "name": "updateGrantSpent", "outputs": [], "stateMutability": "nonpayable", "type": "function" }]
 
 async function onInit(grantId="11111111111111111111111", totalBudget=100000) {
-  // let response=""
   console.log(window.ethereum)
   let web3;
   let fromAddress;
@@ -15,8 +16,17 @@ async function onInit(grantId="11111111111111111111111", totalBudget=100000) {
     web3 = new Web3(window.ethereum)
   }
   else {
-    const magic = new Magic('pk_live_242B3D2FF05F08CD');
+    const customNodeOptions = {
+      rpcUrl: 'https://rpc-mumbai.maticvigil.com/', // Polygon RPC URL
+      chainId: 80001, // Polygon chain id
+    }
+    // const magic = new Magic('pk_live_350FEFDEDF81F26B', customNodeOptions);
+
+    // const magic= new Magic('pk_live_350FEFDEDF81F26BY', { network: customNodeOptions });
+    const magic= new Magic('pk_live_350FEFDEDF81F26B', { network: customNodeOptions });
+    magic.network='matic';
     web3 = new Web3(magic.rpcProvider);
+    
     fromAddress = (await web3.eth.getAccounts())[0];
     console.log("fromAddressfromAddressfromAddressfromAddressfromAddressfromAddress");
     console.log(fromAddress);
@@ -35,29 +45,33 @@ async function onInit(grantId="11111111111111111111111", totalBudget=100000) {
         return
       }
       console.log("Hash of the transaction: " + res)
-      // response = res;
     })
 }
 
-
-
-
-const creategrantUrl = 'https://civitas-api.herokuapp.com/v1/front/grants/create'
+const creategrantUrl = 'https://civitas-api.arhamsoft.org/v1/front/grants/create'
 var eligibleEntityTypes = []
-
 
 const postData = async (obj) => {
   console.log("payload: ", obj);
   console.log("grantUrl", creategrantUrl);
-
+  const getToken = localStorage.getItem('accessToken');
+  console.log('getToken', getToken)
   try {
     const response = await fetch(creategrantUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: token
       },
       body: JSON.stringify(obj),
     });
+    console.log('response',response)
+    if (response ===undefined) {
+      message = 'Failed to authenticate token.'
+      redirectPage(message)
+      return;
+    }
+
     const createGrant = await response.json();
     console.log("createGrant", createGrant);
     return createGrant;
@@ -68,7 +82,6 @@ const postData = async (obj) => {
 
 
 const submitReview = async () => {
-
   Toastify({
     text: "Your form has been submitted. Please wait while your user and organization is created.",
     duration: 1000,
@@ -106,7 +119,7 @@ const submitReview = async () => {
   const fundingTypeValue = fundingTypeInput.value
   const reportingDetailsValue = reportingDetailsInput.value
   console.log(grantNameValue, opportunityNumberValue, grantCategoryValue, opportunitySummaryValue, eligibleEntityValues, eligibleDetailsValue
-    , totalBudgetValue, awardCeilingValue, awardFloorValue, fundingTypeValue, reportingDetailsValue);// 👉️ "Initial value"
+    , totalBudgetValue, awardCeilingValue, awardFloorValue, fundingTypeValue, reportingDetailsValue);// ðŸ‘‰ï¸ "Initial value"
   let data = {
     name: grantNameValue,
     opportunityNumber: opportunityNumberValue,
@@ -189,18 +202,39 @@ const submitReview = async () => {
 
 }
 
+function redirectPage(message) {
+  Toastify({
+    text: message,
+    duration: 4000,
+    close: true,
+    style: {
+      background: "#FF7002",
+    },
+    onClick: function () { }
+  }).showToast();
+  window.location.replace("https://civitasbloc.webflow.io/agency/login");
+  return
+}
+
 const listGrantCategories = async () => {
   try {
-    const response = await fetch('https://civitas-api.herokuapp.com/v1/front/grants/list-active-categories', {
+    const response = await fetch('https://civitas-api.arhamsoft.org/v1/front/grants/list-active-categories', {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: token
       }
     }).then(response => {
+      console.log('response', response)
       if (response.ok) {
         return response.json()
       }
     })
+    if (response ===undefined) {
+      message = 'Failed to authenticate token.'
+      redirectPage(message)
+      return
+    }
     let data = response.activeCategoryTypes;
     console.log("list grant categories", data);
 
@@ -223,8 +257,14 @@ const listGrantCategories = async () => {
 window.onload = function () {
   onInit();
   return
+  token = localStorage.getItem('accessToken');
+  console.log('token', token)
+  if (!token) {
+    message = 'Please login to access Grant Page'
+    redirectPage(message);
+  }
+  else {
   listGrantCategories()
-
   function MaptoNumber(name) {
     if (name == "non-profit") {
       return 0
@@ -282,4 +322,5 @@ window.onload = function () {
   const submitReviewButton = document.getElementById("w-node-_5a442b79-7394-7141-13fc-32e9051ae335-669865ff");
   console.log("submitReviewButton", submitReviewButton)
   submitReviewButton.addEventListener("click", submitReview);
+}
 }
