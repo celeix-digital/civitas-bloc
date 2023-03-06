@@ -48,11 +48,8 @@ const registerButton = async () => {
     text: "Your form has been submitted. Please wait while your user and organization is created.",
     duration: 1000,   
      close: true,
-    style: {
-      height:"50px",
-      backgroundColor:"red",
-      fontsize: "15px",
-      color:"white"
+     style: {
+      background: "#416ab3",
     },
     onClick: function(){}
   }).showToast();
@@ -99,7 +96,6 @@ const registerButton = async () => {
     , organizationPhoneValue, userWalletAddressValue); 
   let data = {
     name:userNameValue,
-    name: userNameValue,
     email: userEmailValue,
     wallet: userWalletAddressValue ? userWalletAddressValue : wallet,
     password: userPasswordValue,
@@ -125,10 +121,7 @@ const registerButton = async () => {
       duration: 3000,   
        close: true,
       style: {
-         height:"50px",
-        backgroundColor:"red",
-        fontsize: "15px",
-        color:"white"
+        background: "#FF7002",
       },
       onClick: function(){}
     }).showToast();
@@ -137,6 +130,8 @@ const registerButton = async () => {
 
   let response = await postData(data);
   console.log("after hit api data...", response)
+
+
   if(response.success){
     Toastify({
       text: response.message,
@@ -148,7 +143,7 @@ const registerButton = async () => {
       position: "right", 
       stopOnFocus: true, 
       style: {
-        background: "linear-gradient(to right, #00b09b, #96c93d)",
+        background: "green",
       },
       onClick: function(){} 
     }).showToast();
@@ -160,10 +155,7 @@ const registerButton = async () => {
       duration: 4000,   
        close: true,
       style: {
-         height:"50px",
-        backgroundColor:"red",
-        fontsize: "15px",
-        color:"white"
+        background: "#FF7002",
       },
       onClick: function(){}
     }).showToast();
