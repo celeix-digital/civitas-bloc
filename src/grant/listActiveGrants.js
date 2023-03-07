@@ -1,6 +1,6 @@
 const listGrantCategories = async () => {
   try {
-    const response = await fetch('https://civitas-api.herokuapp.com/v1/front/grants/list-active-grants', {
+    const response = await fetch('https://civitas-api.arhamsoft.org/v1/front/grants/list-active-grants', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'

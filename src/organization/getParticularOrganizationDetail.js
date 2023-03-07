@@ -1,4 +1,4 @@
-let url = 'https://civitas-api.herokuapp.com/v1/front/organizations/get'
+let url = 'https://civitas-api.arhamsoft.org/v1/front/organizations/get'
 const getParticularOrganization = async id => {
     console.log('id', id)
     console.log('url', url)

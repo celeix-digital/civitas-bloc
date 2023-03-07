@@ -1,4 +1,4 @@
-const url = "https://civitas-api.herokuapp.com/v1/front/users/update-profile"
+const url = "https://civitas-api.arhamsoft.org/v1/front/users/update-profile"
 var imageInput;
 const postData = async (obj) => {
   console.log("data", obj);

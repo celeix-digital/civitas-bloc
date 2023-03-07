@@ -1,32 +1,38 @@
 
 var getArrayCategory = []
+var token;
+var message;
 function getInputField() {
   const inputValue = document.getElementById("field-3").value;
   console.log("inputValue", inputValue)
   listGrantData(inputValue)
 }
 
-
-
-
 const listGrantData = async (inputValue) => {
   console.log("filterValue function", getArrayCategory)
   try {
     console.log("inputValue", inputValue)
-    const response = await fetch('https://civitas-api.herokuapp.com/v1/front/grants/list?' + new URLSearchParams({
+    const response = await fetch('http://localhost:8081/v1/front/grants/list?' + new URLSearchParams({
       name: inputValue,
       categories: getArrayCategory.length ? JSON.stringify(getArrayCategory) : '',
-    }).toString() , {
+    }).toString(), {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: token
       }
     }
     ).then(response => {
+      console.log('response', response)
       if (response.ok) {
         return response.json()
       }
     })
+    if (response === undefined) {
+      message = 'Failed to authenticate token.'
+      redirectPage(message)
+      return;
+    }
     let data = response.data.grants;
     console.log("list grant", data);
 
@@ -58,22 +64,43 @@ const listGrantData = async (inputValue) => {
     console.log(document.getElementsByClassName('w-dyn-items')[0])
     document.getElementsByClassName('w-dyn-items')[0].innerHTML = grantsHtml;
   } catch (err) {
-    console.log(err)
+    console.log('catch err', err)
   }
 }
 
+function redirectPage(message) {
+  Toastify({
+    text: message,
+    duration: 4000,
+    close: true,
+    style: {
+      background: "#FF7002",
+    },
+    onClick: function () { }
+  }).showToast();
+  window.location.replace("https://civitasbloc.webflow.io/agency/login");
+  return
+}
 const listGrantCategories = async () => {
   try {
-    const response = await fetch('https://civitas-api.herokuapp.com/v1/front/grants/list-active-categories', {
+    const response = await fetch('http://localhost:8081/v1/front/grants/list-active-categories', {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: token
       }
     }).then(response => {
+      console.log('response', response)
       if (response.ok) {
         return response.json()
       }
     })
+    if (response === undefined) {
+      message = 'Failed to authenticate token.'
+      redirectPage(message)
+      return
+    }
+    console.log('response', response)
     let data = response.activeCategoryTypes;
     console.log("list grant categories", data);
     let grantsCategoriesHtml = '';
@@ -86,43 +113,52 @@ const listGrantCategories = async () => {
     });
     console.log(document.getElementsByClassName('grant-search_list-wrapper')[4])
     document.getElementsByClassName('grant-search_list-wrapper')[4].innerHTML = grantsCategoriesHtml;
+    return response;
   } catch (err) {
-    console.log(err)
+    console.log('catch err', err)
   }
 }
 
 
 window.onload = function () {
-  listGrantCategories()
-  listGrantData("")
-  function isExsist(CategoryId){
-    if(getArrayCategory.includes(CategoryId))
-      return true
-      else 
-      return false
+  token = localStorage.getItem('accessToken');
+  console.log('token', token)
+  if (!token) {
+    message = 'Please login to access Grant Page'
+    redirectPage(message);
   }
-  const categorySearchList = document.getElementsByClassName("grant-search_list-wrapper")[4];
-  console.log("categorySearchList", categorySearchList)
-  categorySearchList.addEventListener('change', async (event) => {
-    console.log("event dispatched", event)
-    const getCategoryId = event.target.parentElement.id;
-    console.log("event id",getCategoryId)
-    let check =  isExsist(getCategoryId)
-    if(check){
-      var idIndex = getArrayCategory.indexOf(getCategoryId);
-      getArrayCategory.splice(idIndex, 1);
-       listGrantData("")
-     }
-     else{
-        getArrayCategory.push(getCategoryId)
-         listGrantData("")
-     }
-     console.log("getArrayCategory",getArrayCategory)
-  })
-
-  document.getElementById("field-3").addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-      getInputField();
+  else {
+    listGrantCategories()
+    listGrantData("")
+    function isExsist(CategoryId) {
+      if (getArrayCategory.includes(CategoryId))
+        return true
+      else
+        return false
     }
-  })
+    const categorySearchList = document.getElementsByClassName("grant-search_list-wrapper")[4];
+    console.log("categorySearchList", categorySearchList)
+    categorySearchList.addEventListener('change', async (event) => {
+      console.log("event dispatched", event)
+      const getCategoryId = event.target.parentElement.id;
+      console.log("event id", getCategoryId)
+      let check = isExsist(getCategoryId)
+      if (check) {
+        var idIndex = getArrayCategory.indexOf(getCategoryId);
+        getArrayCategory.splice(idIndex, 1);
+        listGrantData("")
+      }
+      else {
+        getArrayCategory.push(getCategoryId)
+        listGrantData("")
+      }
+      console.log("getArrayCategory", getArrayCategory)
+    })
+
+    document.getElementById("field-3").addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        getInputField();
+      }
+    })
+  }
 }

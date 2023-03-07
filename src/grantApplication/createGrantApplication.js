@@ -1,4 +1,4 @@
-const grantApplicationUrl = 'https://civitas-api.herokuapp.com/v1/front/grant-application/create'
+const grantApplicationUrl = 'https://civitas-api.arhamsoft.org/v1/front/grant-application/create'
 var files;
 const postData = async (payload) => {
     console.log("payload: ", payload);

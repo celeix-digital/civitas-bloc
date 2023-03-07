@@ -1,4 +1,4 @@
-let url = 'https://civitas-api.herokuapp.com/v1/front/grant-application/get-application-resources'
+let url = 'https://civitas-api.arhamsoft.org/v1/front/grant-application/get-application-resources'
 const getGrantApplicationResources = async id => {
     console.log('id', id)
     console.log('url', url)

@@ -1,4 +1,4 @@
-const url = 'https://civitas-api.herokuapp.com/v1/admin/organizations/type/list'
+const url = 'https://civitas-api.arhamsoft.org/v1/admin/organizations/type/list'
 const listOrganizationTypeData = async obj => {
     console.log('url', url)
     try {

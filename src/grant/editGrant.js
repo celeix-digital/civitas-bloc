@@ -1,4 +1,4 @@
-const grantUrl = 'https://civitas-api.herokuapp.com/v1/front/grants/edit'
+const grantUrl = 'https://civitas-api.arhamsoft.org/v1/front/grants/edit'
 var imageValue
 const editData = async (obj) => {
   console.log("data", obj);

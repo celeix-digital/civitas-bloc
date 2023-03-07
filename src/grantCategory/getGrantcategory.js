@@ -1,4 +1,4 @@
-let getgrantCategoryUrl = 'https://civitas-api.herokuapp.com/v1/admin/grants/category/get'
+let getgrantCategoryUrl = 'https://civitas-api.arhamsoft.org/v1/admin/grants/category/get'
 const getgrantCategoryData = async (categoryId) => {
     console.log("categoryId", categoryId);
     getgrantCategoryUrl = getgrantCategoryUrl + '/' + categoryId;

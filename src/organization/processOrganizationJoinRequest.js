@@ -1,4 +1,4 @@
-const url = 'https://civitas-api.herokuapp.com/v1/front/organizations/invitation-to-join-organization'
+const url = 'https://civitas-api.arhamsoft.org/v1/front/organizations/invitation-to-join-organization'
 const acceptOrganizationJoinRequest = async obj => {
   console.log('url', url)
   console.log('obj', obj)

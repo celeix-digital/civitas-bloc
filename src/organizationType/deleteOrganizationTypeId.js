@@ -1,4 +1,4 @@
-let deleteOrganizationTypeIdUrl = 'https://civitas-api.herokuapp.com/v1/admin/organizations/type/delete'
+let deleteOrganizationTypeIdUrl = 'https://civitas-api.arhamsoft.org/v1/admin/organizations/type/delete'
 const getOrganizationTypeIdData = async (typeId) => {
     console.log("typeId", typeId);
     deleteOrganizationTypeIdUrl = deleteOrganizationTypeIdUrl + '/' + typeId;

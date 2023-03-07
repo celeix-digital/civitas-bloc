@@ -1,4 +1,4 @@
-let getOrganizationTypeUrl = 'https://civitas-api.herokuapp.com/v1/admin/organizations/type/get'
+let getOrganizationTypeUrl = 'https://civitas-api.arhamsoft.org/v1/admin/organizations/type/get'
 const getOrganizationTypeData = async (typeId) => {
     console.log("name", typeId);
     getOrganizationTypeUrl = getOrganizationTypeUrl + '/' + typeId;

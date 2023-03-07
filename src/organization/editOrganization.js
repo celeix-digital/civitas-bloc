@@ -1,5 +1,5 @@
-const organizationUrl = 'https://civitas-api.herokuapp.com/v1/front/organizations/edit'
-var typeUrl = 'https://civitas-api.herokuapp.com/v1/admin/organizations/type/get-id'
+const organizationUrl = 'https://civitas-api.arhamsoft.org/v1/front/organizations/edit'
+var typeUrl = 'https://civitas-api.arhamsoft.org/v1/admin/organizations/type/get-id'
 var logoInput
 const editOrganizationData = async obj => {
   console.log('data', obj)

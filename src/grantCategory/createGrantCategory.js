@@ -1,4 +1,4 @@
-const grantCategoryUrl = 'https://civitas-api.herokuapp.com/v1/admin/grants/category/create'
+const grantCategoryUrl = 'https://civitas-api.arhamsoft.org/v1/admin/grants/category/create'
 var grantCategoryImageValue;
 const postgrantCategoryData = async (obj) => {
     console.log("data", obj);

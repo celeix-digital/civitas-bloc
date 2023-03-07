@@ -1,4 +1,4 @@
-const url: string = "https://civitas-api.herokuapp.com/v1/front/users/register";
+const url: string = "https://civitas-api.arhamsoft.org/v1/front/users/register";
 interface SignupResponse {
     status: boolean;
     data: object;

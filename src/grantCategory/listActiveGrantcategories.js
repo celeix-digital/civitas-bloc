@@ -1,4 +1,4 @@
-const listActiveGrantCategoryUrl = 'https://civitas-api.herokuapp.com/v1/front/grants/list-active-categories'
+const listActiveGrantCategoryUrl = 'https://civitas-api.arhamsoft.org/v1/front/grants/list-active-categories'
 const listActiveGrantCategoriesData = async obj => {
     console.log('listActiveGrantCategoryUrl', listActiveGrantCategoryUrl)
     try {
