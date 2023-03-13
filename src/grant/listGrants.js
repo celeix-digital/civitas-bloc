@@ -12,7 +12,7 @@ const listGrantData = async (inputValue) => {
   console.log("filterValue function", getArrayCategory)
   try {
     console.log("inputValue", inputValue)
-    const response = await fetch('http://localhost:8081/v1/front/grants/list?' + new URLSearchParams({
+    const response = await fetch('https://civitas-api.arhamsoft.org/v1/front/grants/list?' + new URLSearchParams({
       name: inputValue,
       categories: getArrayCategory.length ? JSON.stringify(getArrayCategory) : '',
     }).toString(), {
@@ -83,7 +83,7 @@ function redirectPage(message) {
 }
 const listGrantCategories = async () => {
   try {
-    const response = await fetch('http://localhost:8081/v1/front/grants/list-active-categories', {
+    const response = await fetch('https://civitas-api.arhamsoft.org/v1/front/grants/list-active-categories', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -118,7 +118,6 @@ const listGrantCategories = async () => {
     console.log('catch err', err)
   }
 }
-
 
 window.onload = function () {
   token = localStorage.getItem('accessToken');

@@ -1,4 +1,4 @@
-const loginAgency = "http://localhost:8081/v1/front/agencies/login-agency"
+const loginAgency = "https://civitas-api.arhamsoft.org/v1/front/agencies/login-agency"
 const postData = async (obj) => {
   console.log("data post", obj);
   console.log("loginAgency url", loginAgency);
@@ -116,4 +116,3 @@ window.onload = function () {
     const createloginButton = document.getElementById("w-node-_4e84affd-5009-8f99-1d6b-4107f30fdd94-39a6fc7e");
     createloginButton.addEventListener("click", loginButton);
 }
-

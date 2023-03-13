@@ -7,6 +7,7 @@ function authCheck() {
     const token = localStorage.getItem("accessToken");
     const currentPath = window.location.pathname;
     if (!token && restrictedRoutes.indexOf(currentPath) > -1) {
+        console.log('1')
         if (currentPath.indexOf('/agency') > -1) {
             window.location.href = `${domainName}agency/login`
         }
@@ -15,6 +16,7 @@ function authCheck() {
         }
     }
     else if (token && unRestrictedRoutes.indexOf(currentPath) > -1) {
+        console.log('2')
         if (currentPath.indexOf('/agency') > -1) {
             window.location.href = `${domainName}agency/dashboard`
         }

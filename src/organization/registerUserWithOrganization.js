@@ -1,5 +1,5 @@
-const organization_type_url = 'http://localhost:8081/v1/admin/organizations/type/list'
-const register_user_with_organization_url = 'http://localhost:8081/v1/front/organizations/register-user-with-organization'
+const organization_type_url = 'https://civitas-api.arhamsoft.org/v1/admin/organizations/type/list'
+const register_user_with_organization_url = 'https://civitas-api.arhamsoft.org/v1/front/organizations/register-user-with-organization'
 var wallet;
 var files;
 var token;
@@ -235,20 +235,20 @@ const loadOrganizationTypes = async () => {
     return null
   }
 }
-function redirectPage(message) {
-  Toastify({
-    text: message,
-    duration: 4000,
-    close: true,
-    style: {
-      background: "#FF7002",
-    },
-    onClick: function () { }
-  }).showToast();
-  console.log('window')
-  window.location.replace("https://civitasbloc.webflow.io/organization/login");
-  return
-}
+// function redirectPage(message) {
+//   Toastify({
+//     text: message,
+//     duration: 4000,
+//     close: true,
+//     style: {
+//       background: "#FF7002",
+//     },
+//     onClick: function () { }
+//   }).showToast();
+//   console.log('window')
+//   window.location.replace("https://civitasbloc.webflow.io/organization/login");
+//   return
+// }
 window.onload = function () {
   loadOrganizationTypes();
   const createWalletButton = document.getElementById("createWalletButton");

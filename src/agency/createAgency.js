@@ -1,4 +1,4 @@
-const createAgency = 'http://localhost:8081/v1/front/agencies/create'
+const createAgency = 'https://civitas-api.arhamsoft.org/v1/front/agencies/create'
 var wallet;
 var token;
 var message;

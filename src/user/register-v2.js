@@ -18,57 +18,60 @@ const postData = async (obj) => {
     return null;
   }
 };
-
-const getAccounts = async () => {
-  let magic = new Magic("pk_live_242B3D2FF05F08CD", {
-    network: "goerli",
-    extensions: [new MagicConnectExtension()],
-  });
-  let web3 = new Web3(magic.rpcProvider);
-  
-  return await web3.eth
-    .getAccounts()
-    .then((accounts) => {
-      return accounts;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
-const registerClickButton = (document.getElementById(
-  "registerClickButton"
-).onclick = async function () {
-  const accounts = await getAccounts();
-  console.log("accounts", accounts);
-  const userNameInput = document.getElementById("userNameInput");
-  const userEmailInput = document.getElementById("userEmailInput");
-  const userPasswordInput = document.getElementById("userPasswordInput");
-  const userNameValue = userNameInput.value;
-  const userEmailValue = userEmailInput.value;
-  const userPasswordValue = userPasswordInput.value;
-  console.log(userNameValue, userEmailValue, userPasswordValue); // 👉️ "Initial value"
-  if (!userNameValue || !userEmailValue || !userPasswordValue) {
-    if (errorMessageContainer)
-      errorMessageContainer.innerHTML = "Please provide all required values";
-    return;
-  }
+const registerButton = async () => {
+  const userNameInput = document.getElementById("Sign-up-Form-7-Name");
+  const userEmailInput = document.getElementById("Sign-up-Form-7-Email");
+  const userPasswordInput = document.getElementById("Sign-up-Form-7-Password");
+  const name = userNameInput.value;
+  const email = userEmailInput.value;
+  const password = userPasswordInput.value;
+  console.log(name, email, email);
   let data = {
-    name: userNameValue,
-    wallet: accounts[0],
-    email: userEmailValue,
-    password: userPasswordValue,
+    name,
+    email,
+    password
   };
   console.log("data Register", data);
   let response = await postData(data);
   console.log("response", response);
-  if (response && response.status) {
-    if (successMessageContainer)
-      successMessageContainer.innerHTML = response.message;
+
+  if (response.success) {
+    Toastify({
+      text: response.message,
+      duration: 3000,
+      newWindow: true,
+      close: true,
+      gravity: "top",
+      position: "right",
+      stopOnFocus: true,
+      style: {
+        background: "green",
+      },
+      onClick: function () { }
+    }).showToast();
+    window.location.replace("https://civitasbloc.webflow.io/organization/dashboard");
+  }
+  else {
+    Toastify({
+      text: response.message,
+      duration: 4000,
+      close: true,
+      style: {
+        background: "#FF7002",
+      },
+      onClick: function () { }
+    }).showToast();
+  }
+
+  if (response && response.success) {
     if (userNameInput.value) userNameInput.value = "";
     if (userEmailInput.value) userEmailInput.value = "";
     if (userPasswordInput.value) userPasswordInput.value = "";
-  } else if (response && !response.status) {
-    if (errorMessageContainer)
-      errorMessageContainer.innerHTML = response.message;
   }
-});
+};
+
+
+window.onload = function () {
+  const registerClickButton = document.getElementById("w-node-_615332f6-3d02-49a9-4a6f-afc7bb46b6ea-45e18da5");
+  registerClickButton.addEventListener("click", registerButton);
+}
