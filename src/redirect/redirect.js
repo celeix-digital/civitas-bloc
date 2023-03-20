@@ -8,12 +8,16 @@ function authCheck() {
     const currentPath = window.location.pathname;
     console.log("token", token)
     if(token) {
+        if(document.getElementById('loginLink') && document.getElementById('signUpLink')) {
         document.getElementById('loginLink').style.display = "none";
         document.getElementById('signUpLink').style.display = "none";
+        }
     }
     else {
-        document.querySelector('[fs-modal-element="opne"]').style.display = "none";
+        if(document.getElementById('logoutLink') && document.querySelector('[fs-modal-element="open"]')) {
+        document.querySelector('[fs-modal-element="open"]').style.display = "none";
         document.getElementById('logoutLink').style.display = "none";
+        }
     }
     if (!token && restrictedRoutes.indexOf(currentPath) > -1) {
         console.log('1')
@@ -35,7 +39,7 @@ function authCheck() {
     }
 }
 
-window.onload = function() {
+// window.onload = function() {
     setTimeout(()=>{
         authCheck();
         // document.getElementById('logoutLink').addEventListener("click", function(){
@@ -43,11 +47,12 @@ window.onload = function() {
         //     // localStorage.clear();
         //     // window.location.href = domainName;
         // })
-
-        document.querySelector('#logoutLink').addEventListener('click', async function (e) {
-            console.log("HERE IT IS IN THE CLICK")
-            localStorage.clear();
-            window.location.href = domainName;
-        });
+        if(document.getElementById('logoutLink')) {
+            document.querySelector('#logoutLink').addEventListener('click', async function (e) {
+                console.log("HERE IT IS IN THE CLICK")
+                localStorage.clear();
+                window.location.href = domainName;
+            });
+        }
     }, 1000)
-}
+// }
