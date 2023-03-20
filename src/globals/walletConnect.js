@@ -49,7 +49,8 @@ async function conectMagicLink(e) {
     })
 }
 
-window.onload = function () {
+ function walletConnect() {
+    console.log('Hey')
     const connectedWallet = localStorage.getItem('connectedWallet')
     if (connectedWallet) {
         removeModalOpenar(connectedWallet)
@@ -91,3 +92,5 @@ const removeModalOpenar = (address) => {
       </div>`;
     },1000)
 }
+
+walletConnect()
