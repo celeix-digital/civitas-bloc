@@ -6,6 +6,15 @@ const unRestrictedRoutes = ["/organization/login", "/agency/login", "/organizati
 function authCheck() {
     const token = localStorage.getItem("accessToken");
     const currentPath = window.location.pathname;
+    console.log("token", token)
+    if(token) {
+        document.getElementById('loginLink').style.display = "none";
+        document.getElementById('signUpLink').style.display = "none";
+    }
+    else {
+        document.querySelector('[fs-modal-element="opne"]').style.display = "none";
+        document.getElementById('logoutLink').style.display = "none";
+    }
     if (!token && restrictedRoutes.indexOf(currentPath) > -1) {
         console.log('1')
         if (currentPath.indexOf('/agency') > -1) {
@@ -25,4 +34,20 @@ function authCheck() {
         }
     }
 }
-authCheck();
+
+window.onload = function() {
+    setTimeout(()=>{
+        authCheck();
+        // document.getElementById('logoutLink').addEventListener("click", function(){
+        //     // console.log("HERE IT IS IN THE CLICK")
+        //     // localStorage.clear();
+        //     // window.location.href = domainName;
+        // })
+
+        document.querySelector('#logoutLink').addEventListener('click', async function (e) {
+            console.log("HERE IT IS IN THE CLICK")
+            localStorage.clear();
+            window.location.href = domainName;
+        });
+    }, 1000)
+}
