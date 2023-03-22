@@ -38,15 +38,9 @@ function authCheck() {
         }
     }
 }
-
-// window.onload = function() {
     setTimeout(()=>{
         authCheck();
-        // document.getElementById('logoutLink').addEventListener("click", function(){
-        //     // console.log("HERE IT IS IN THE CLICK")
-        //     // localStorage.clear();
-        //     // window.location.href = domainName;
-        // })
+       
         if(document.getElementById('logoutLink')) {
             document.querySelector('#logoutLink').addEventListener('click', async function (e) {
                 console.log("HERE IT IS IN THE CLICK")
@@ -55,4 +49,3 @@ function authCheck() {
             });
         }
     }, 1000)
-// }

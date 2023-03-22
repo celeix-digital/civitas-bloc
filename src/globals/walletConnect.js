@@ -50,7 +50,6 @@ async function conectMagicLink(e) {
 }
 
  function walletConnect() {
-    console.log('Hey')
     const connectedWallet = localStorage.getItem('connectedWallet')
     if (connectedWallet) {
         removeModalOpenar(connectedWallet)
