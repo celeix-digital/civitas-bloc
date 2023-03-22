@@ -40,6 +40,7 @@ async function onInit(randomString, totalBudget) {
       .addGrant(randomString, '0x11111111111111111111111', '0x7Eb0156eF2b1d3545c8684d9eb005207Aaa723B7', totalBudget, '0x7Eb0156eF2b1d3545c8684d9eb005207Aaa723B7', false, '0x1111111')
       .send({ from: fromAddress }, function (err, res) {
         if (err) {
+          console.log(error)
           resolve(false)
           return
         }
