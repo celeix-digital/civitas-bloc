@@ -1,21 +1,17 @@
-const organization_type_url = 'https://civitas-api.arhamsoft.org/v1/admin/organizations/type/list'
-const register_user_with_organization_url = 'https://civitas-api.arhamsoft.org/v1/front/organizations/register-user-with-organization'
-var wallet;
+const organization_type_url = 'http://localhost:8081/v1/admin/organizations/type/list'
+const register_user_with_organization_url = 'http://localhost:8081/v1/front/organizations/register-user-with-organization'
+let wallet;
 var files;
-var token;
-var message;
-var formData = new FormData();
+let token;
+let message;
+let formData = new FormData();
 const postData = async (obj) => {
   console.log("data post", obj);
   try {
     const response = await fetch(register_user_with_organization_url, {
       method: "POST",
       body: obj,
-      headers: {
-        Authorization: token
-      }
     });
-
     const registerUserWithOrganization = await response.json();
     return registerUserWithOrganization;
   } catch (error) {
@@ -29,7 +25,6 @@ const getAccounts = async () => {
     extensions: [new MagicConnectExtension()],
   });
   let web3 = new Web3(magic.rpcProvider);
-
   return await web3.eth
     .getAccounts()
     .then((accounts) => {
@@ -78,17 +73,17 @@ const registerButton = async () => {
   const serviceProvidedValue = organizationDescriptionInput.value
   const organizationWebsiteValue = organizationWebsiteInput.value
   const organizationPhoneValue = organizationPhoneInput.value
-  const userWalletAddressValue = userWalletAddressInput.value
+  wallet = userWalletAddressInput.value
 
   console.log(userNameValue, userEmailValue, userPasswordValue, organizationNameValue, organizationTypeValue, organizationRoleValue,
     streetAddressValue, streetAddress2Value, organizationCityValue, organizationStateValue, organizationZipValue
     , serviceProvidedValue, organizationWebsiteValue
-    , organizationPhoneValue, userWalletAddressValue);
+    , organizationPhoneValue, wallet);
 
   let data = {
     name: userNameValue,
     email: userEmailValue,
-    wallet: userWalletAddressValue ? userWalletAddressValue : wallet,
+    wallet: wallet,
     password: userPasswordValue,
     organizationName: organizationNameValue,
     type: organizationTypeValue,
@@ -103,77 +98,17 @@ const registerButton = async () => {
     phone: organizationPhoneValue,
   };
 
-  console.log("data...", data)
-  console.log('check wallet', wallet)
-
-
-  if (!data.wallet) {
-    Toastify({
-      text: "Please add wallet address",
-      duration: 3000,
-      close: true,
-      style: {
-        background: "#FF7002",
-      },
-      onClick: function () { }
-    }).showToast();
-    return;
-  }
-  for (let key in data) {
-    console.log('data[key]', data[key])
-    console.log('key', key)
-    formData.append(key, data[key])
-  }
-
-  console.log("formData...", formData)
-  Toastify({
-    text: "Your form has been submitted. Please wait while your user and agency is created.",
-    duration: 3000,
-    close: true,
-    style: {
-      background: "#416ab3",
-    },
-    onClick: function () { }
-  }).showToast();
-
-
+  console.log("data", data)
+  appendData(data)
+  submitToast()
   let response = await postData(formData);
   console.log("after hit api data...", response)
 
-
-  if (response.status === false) {
-    message = 'Failed to authenticate token.'
-    redirectPage(message)
-    return;
-  }
-
-
   if (response.success) {
-    Toastify({
-      text: response.message,
-      duration: 3000,
-      destination: response.txLink,
-      newWindow: true,
-      close: true,
-      gravity: "top",
-      position: "right",
-      stopOnFocus: true,
-      style: {
-        background: "green",
-      },
-      onClick: function () { }
-    }).showToast();
+    checkResponse(response.message, response.txLink, backgroundcolor = "green")
   }
   else {
-    Toastify({
-      text: response.message,
-      duration: 4000,
-      close: true,
-      style: {
-        background: "#FF7002",
-      },
-      onClick: function () { }
-    }).showToast();
+    checkResponse(response.message, txLink = "", backgroundcolor = "#FF7002")
   }
   if (response && response.success) {
     if (userNameInput.value) userNameInput.value = "";
@@ -193,20 +128,40 @@ const registerButton = async () => {
     if (userWalletAddressInput.value) userWalletAddressInput.value = "";
     wallet = ""
   }
-  for (let key in data) {
-    console.log('delete key', key)
-    formData.delete(key)
-  }
+  deleteData(data)
+}
+const checkResponse = (message, txLink, backgroundcolor) => {
+  Toastify({
+    text: message,
+    duration: 3000,
+    destination: txLink,
+    newWindow: true,
+    close: true,
+    gravity: "top",
+    position: "right",
+    stopOnFocus: true,
+    style: {
+      background: `${backgroundcolor}`,
+    },
+    onClick: function () { }
+  }).showToast();
+}
+const submitToast = () => {
+  Toastify({
+    text: "Your form has been submitted. Please wait while your user and organization is created.",
+    duration: 3000,
+    close: true,
+    style: {
+      background: "#416ab3",
+    },
+    onClick: function () { }
+  }).showToast();
 }
 const loadOrganizationTypes = async () => {
   console.log('organization_type_url', organization_type_url)
   try {
     const response = await fetch(organization_type_url, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: token
-      }
     }).then(response => {
       if (response.ok) {
         return response.json()
@@ -235,35 +190,31 @@ const loadOrganizationTypes = async () => {
     return null
   }
 }
-// function redirectPage(message) {
-//   Toastify({
-//     text: message,
-//     duration: 4000,
-//     close: true,
-//     style: {
-//       background: "#FF7002",
-//     },
-//     onClick: function () { }
-//   }).showToast();
-//   console.log('window')
-//   window.location.replace("https://civitasbloc.webflow.io/organization/login");
-//   return
-// }
 window.onload = function () {
   loadOrganizationTypes();
   const createWalletButton = document.getElementById("createWalletButton");
   createWalletButton.addEventListener("click", createWallet);
   const registerClickButton = document.getElementById("registerClickButton");
   registerClickButton.addEventListener("click", registerButton);
-  const organizationLogoInput = document.getElementById('orgLogo').addEventListener('change', event => {
+  document.getElementById('orgLogo').addEventListener('change', event => {
     file = event.target.files[0];
     console.log('logo', file)
     formData.append('logo', file)
   })
-  const organizationFormInput = document.getElementById('orgForm').addEventListener('change', event => {
+  document.getElementById('orgForm').addEventListener('change', event => {
     file = event.target.files[0];
     console.log('file', file)
     formData.append('file', file)
   })
 }
+function appendData(data) {
+  for (let key in data) {
+    formData.append(key, data[key])
+  }
+}
 
+function deleteData(data) {
+  for (let key in data) {
+    formData.delete(key)
+  }
+}

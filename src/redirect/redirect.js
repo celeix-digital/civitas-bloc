@@ -1,6 +1,7 @@
 const domainName = "https://civitasbloc.webflow.io/"
 const restrictedRoutes = [
     "/agency/dashboard", "/agency/grants/create-grant", "/organization/dashboard", "/organization/find-grants/grant-locator"
+    ,"/agency/grants/approve-grants"
 ]
 const unRestrictedRoutes = ["/organization/login", "/agency/login", "/organization/sign-up", "/agency/sign-up"]
 function authCheck() {
@@ -44,7 +45,7 @@ function authCheck() {
         if(document.getElementById('logoutLink')) {
             document.querySelector('#logoutLink').addEventListener('click', async function (e) {
                 console.log("HERE IT IS IN THE CLICK")
-                localStorage.clear();
+                localStorage.removeItem('accessToken') 
                 window.location.href = domainName;
             });
         }

@@ -1,19 +1,17 @@
-const createAgency = 'https://civitas-api.arhamsoft.org/v1/front/agencies/create'
-var wallet;
-var token;
-var message;
-var formData = new FormData();
+const createAgency = 'http://localhost:8081/v1/front/agencies/create'
+let wallet;
+let token;
+let message;
+let data;
+let formData = new FormData();
 const postData = async (obj) => {
   console.log("data post", obj);
   try {
     const response = await fetch(createAgency, {
       method: "POST",
       body: obj,
-      headers: {
-        Authorization: token
-      }
     });
-    
+
     const createUserWithAgency = await response.json();
     return createUserWithAgency;
   } catch (error) {
@@ -43,9 +41,34 @@ const createWallet = async () => {
   wallet = accounts[0]
   console.log("wallet", wallet)
 }
+const submitToast = () => {
+  Toastify({
+    text: "Your form has been submitted. Please wait while your user and agency is created.",
+    duration: 3000,
+    close: true,
+    style: {
+      background: "#416ab3",
+    },
+    onClick: function () { }
+  }).showToast();
+}
+const checkResponse = (message, txLink, backgroundcolor) => {
+  Toastify({
+    text: message,
+    duration: 3000,
+    destination: txLink,
+    newWindow: true,
+    close: true,
+    gravity: "top",
+    position: "right",
+    stopOnFocus: true,
+    style: {
+      background: `${backgroundcolor}`,
+    },
+    onClick: function () { }
+  }).showToast();
+}
 const registerButton = async () => {
-
-
   const userNameInput = document.getElementById("userNameInput");
   const userEmailInput = document.getElementById("userEmailInput");
   const userPasswordInput = document.getElementById("userPasswordInput");
@@ -59,7 +82,6 @@ const registerButton = async () => {
   const agencyWebsiteInput = document.getElementById("orgWebsite")
   const agencyPhoneInput = document.getElementById("orgPhone")
   const userWalletAddressInput = document.getElementById("userWalletAddress")
-
   const userNameValue = userNameInput.value;
   const userEmailValue = userEmailInput.value;
   const userPasswordValue = userPasswordInput.value;
@@ -72,17 +94,16 @@ const registerButton = async () => {
   const serviceProvidedValue = agencyDescriptionInput.value
   const agencyWebsiteValue = agencyWebsiteInput.value
   const agencyPhoneValue = agencyPhoneInput.value
-  const userWalletAddressValue = userWalletAddressInput.value
+   wallet = userWalletAddressInput.value
   console.log(userNameValue, userEmailValue, userPasswordValue, agencyNameValue,
     streetAddressValue, streetAddress2Value, agencyCityValue, agencyStateValue, agencyZipValue
     , serviceProvidedValue, agencyWebsiteValue
-    , agencyPhoneValue, userWalletAddressValue);
-
-  let data = {
+    , agencyPhoneValue, wallet);
+   data = {
     userName: userNameValue,
     agencyName: agencyNameValue,
     email: userEmailValue,
-    wallet: userWalletAddressValue ? userWalletAddressValue : wallet,
+    wallet: wallet,
     password: userPasswordValue,
     street1: streetAddressValue,
     street2: streetAddress2Value,
@@ -95,73 +116,16 @@ const registerButton = async () => {
   };
   console.log("data...", data)
   console.log('check wallet', wallet)
-  if (!data.wallet) {
-    Toastify({
-      text: "Please add wallet address",
-      duration: 3000,
-      close: true,
-      style: {
-        background: "#FF7002",
-      },
-      onClick: function () { }
-    }).showToast();
-    return;
-  }
-
-  for (let key in data) {
-    console.log('data[key]', data[key])
-    console.log('key', key)
-    formData.append(key, data[key])
-  }
-
-  Toastify({
-    text: "Your form has been submitted. Please wait while your user and agency is created.",
-    duration: 3000,
-    close: true,
-    style: {
-      background: "#416ab3",
-    },
-    onClick: function () { }
-  }).showToast();
-
-
-
+  appendData(data)
+  submitToast()
   let response = await postData(formData);
   console.log("response", response)
-  if (response.status === false) {
-    message = 'Failed to authenticate token.'
-    redirectPage(message)
-    return;
-  }
   console.log("after hit api data...", response.createUserWithAgency)
-
-
   if (response.success) {
-    Toastify({
-      text: response.message,
-      duration: 3000,
-      destination: response.txLink,
-      newWindow: true,
-      close: true,
-      gravity: "top",
-      position: "right",
-      stopOnFocus: true,
-      style: {
-        background: "green",
-      },
-      onClick: function () { }
-    }).showToast();
+    checkResponse(response.message, response.txLink, backgroundcolor = "green")
   }
   else {
-    Toastify({
-      text: response.message,
-      duration: 4000,
-      close: true,
-      style: {
-        background: "#FF7002",
-      },
-      onClick: function () { }
-    }).showToast();
+    checkResponse(response.message, txLink = "", backgroundcolor = "#FF7002")
   }
   if (response && response.success) {
     if (userNameInput.value) userNameInput.value = "";
@@ -179,34 +143,26 @@ const registerButton = async () => {
     if (userWalletAddressInput.value) userWalletAddressInput.value = "";
     wallet = ""
   }
+  deleteData(data)
+}
+function appendData(data){
+  for (let key in data) {
+    formData.append(key, data[key])
+  }
+}
+
+function deleteData(data){
   for (let key in data) {
     console.log('delete key', key)
     formData.delete(key)
   }
 }
-
-function redirectPage(message) {
-  Toastify({
-    text: message,
-    duration: 4000,
-    close: true,
-    style: {
-      background: "#FF7002",
-    },
-    onClick: function () { }
-  }).showToast();
-  window.location.replace("https://civitasbloc.webflow.io/agency/login");
-  return
-}
-
-
 window.onload = function () {
   const createWalletButton = document.getElementById("createWalletButton");
   createWalletButton.addEventListener("click", createWallet);
   const registerClickButton = document.getElementById("registerClickButton");
   registerClickButton.addEventListener("click", registerButton);
-
-  const agencyLogoInput = document.getElementById('orgLogoWrapper').addEventListener('change', event => {
+  document.getElementById('orgLogoWrapper').addEventListener('change', event => {
     const file = event.target.files[0];
     console.log('agency logo', file)
     formData.append('logo', file)

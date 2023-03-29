@@ -11,7 +11,7 @@ function getInputField() {
   inputValue = document.getElementById("field-3").value;
   listGrantData()
 }
-const renderGrants=(response)=> {
+const renderGrants = (response) => {
   let data = response.data.grants;
   console.log("list grant data", data);
   if (Object.keys(data).length > 0) {
@@ -40,14 +40,20 @@ const renderGrants=(response)=> {
     });
     document.getElementsByClassName('w-dyn-items')[0].innerHTML = grantsHtml;
     isLoading = false;
+    console.log(' if  grants')
+    document.getElementsByClassName('grant-search_empty')[0].style.display = 'none'
   }
-  const grantSearchEmpty = document.getElementsByClassName('grant-search_empty')[0]
-  grantSearchEmpty.style.display = 'none'
+  else {
+    console.log('else grants')
+    // document.getElementsByClassName('w-dyn-items')[0].innerHTML = document.getElementsByClassName('grant-search_empty')[0]
+    document.getElementsByClassName('grant-search_empty')[0].style.display = 'block'
+  }
+  
 }
 const listGrantData = async () => {
-  console.log('grantsHtml',grantsHtml)
+  console.log('grantsHtml', grantsHtml)
   try {
-    response = await fetch('https://civitas-api.arhamsoft.org/v1/front/grants/list?' + new URLSearchParams({
+    response = await fetch('http://localhost:8081/v1/front/grants/list?' + new URLSearchParams({
       name: inputValue,
       page: page,
       categories: getArrayCategory.length ? JSON.stringify(getArrayCategory) : '',
@@ -60,7 +66,7 @@ const listGrantData = async () => {
     })
     console.log('response list grant data', response)
     if (response && response.status === false) {
-      localStorage.clear()
+      localStorage.removeItem('accessToken')
       getResponse(response)
       return;
     }
@@ -85,14 +91,14 @@ function redirectPage(message) {
 }
 const listGrantCategories = async () => {
   try {
-    response = await fetch('https://civitas-api.arhamsoft.org/v1/front/grants/list-active-categories', {
+    response = await fetch('http://localhost:8081/v1/front/grants/list-active-categories', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       }
     })
-     response = await response.json();
+    response = await response.json();
     console.log("response", response);
     return response;
   } catch (err) {
@@ -124,7 +130,7 @@ function getResponse(response) {
   }).showToast();
   window.location.href = `${domainUrl}organization/login`
 }
-const renderCategories=(response)=> {
+const renderCategories = (response) => {
   let data = response.activeCategoryTypes;
   data.forEach(grantCategory => {
     grantsCategoriesHtml += `<div class="grant-search_list">
@@ -137,10 +143,10 @@ const renderCategories=(response)=> {
 }
 window.onload = async function () {
   token = localStorage.getItem('accessToken')
-   response = await listGrantCategories()
+  response = await listGrantCategories()
   console.log('window.onload grant categories response', response)
   if (response && response.status === false) {
-    localStorage.clear()
+    localStorage.removeItem('accessToken') 
     getResponse(response)
     return;
   }
