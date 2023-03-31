@@ -1,4 +1,4 @@
-const createAgency = 'http://localhost:8081/v1/front/agencies/create'
+const createAgency = 'https://civitas-api.arhamsoft.org/v1/front/agencies/create'
 let wallet;
 let token;
 let message;
@@ -127,7 +127,7 @@ const registerButton = async () => {
   else {
     checkResponse(response.message, txLink = "", backgroundcolor = "#FF7002")
   }
-  if (response && response.success) {
+  // if (response && response.success) {
     if (userNameInput.value) userNameInput.value = "";
     if (userEmailInput.value) userEmailInput.value = "";
     if (userPasswordInput.value) userPasswordInput.value = "";
@@ -142,7 +142,7 @@ const registerButton = async () => {
     if (agencyPhoneInput.value) agencyPhoneInput.value = "";
     if (userWalletAddressInput.value) userWalletAddressInput.value = "";
     wallet = ""
-  }
+  // }
   deleteData(data)
 }
 function appendData(data){

@@ -14,7 +14,7 @@ function getInputField() {
 const renderGrants = (response) => {
   let data = response.data.grants;
   console.log("list grant data", data);
-  if (Object.keys(data).length > 0) {
+  // if (Object.keys(data).length > 0) {
     data.forEach(grant => {
       grantsHtml += `<div id="w-node-_2277fbd9-a714-5afe-0f89-998ad7055eec-84763b17" role="listitem" class="grant-search_grant-item w-dyn-item">
       <div id="w-node-_5ef5f7b8-2a38-9972-128d-0deb760e5c0d-84763b17" class="grant-search_grant-item-info">
@@ -40,20 +40,22 @@ const renderGrants = (response) => {
     });
     document.getElementsByClassName('w-dyn-items')[0].innerHTML = grantsHtml;
     isLoading = false;
-    console.log(' if  grants')
-    document.getElementsByClassName('grant-search_empty')[0].style.display = 'none'
-  }
-  else {
-    console.log('else grants')
+    // console.log(' if  grants')
+    // document.getElementsByClassName('grant-search_empty')[0].style.display = 'none'
+  // }
+  // else {
+    // console.log('else grants')
+    if (Object.keys(data).length > 0) {
+    console.log('document.getElementsByClassName(grant-search_empty', document.getElementsByClassName('grant-search_empty')[0])
     // document.getElementsByClassName('w-dyn-items')[0].innerHTML = document.getElementsByClassName('grant-search_empty')[0]
     document.getElementsByClassName('grant-search_empty')[0].style.display = 'block'
-  }
-  
+   }
+
 }
 const listGrantData = async () => {
   console.log('grantsHtml', grantsHtml)
   try {
-    response = await fetch('http://localhost:8081/v1/front/grants/list?' + new URLSearchParams({
+    response = await fetch('https://civitas-api.arhamsoft.org/v1/front/grants/list?' + new URLSearchParams({
       name: inputValue,
       page: page,
       categories: getArrayCategory.length ? JSON.stringify(getArrayCategory) : '',
@@ -91,7 +93,7 @@ function redirectPage(message) {
 }
 const listGrantCategories = async () => {
   try {
-    response = await fetch('http://localhost:8081/v1/front/grants/list-active-categories', {
+    response = await fetch('https://civitas-api.arhamsoft.org/v1/front/grants/list-active-categories', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -146,7 +148,7 @@ window.onload = async function () {
   response = await listGrantCategories()
   console.log('window.onload grant categories response', response)
   if (response && response.status === false) {
-    localStorage.removeItem('accessToken') 
+    localStorage.removeItem('accessToken')
     getResponse(response)
     return;
   }

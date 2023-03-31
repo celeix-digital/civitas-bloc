@@ -1,8 +1,5 @@
-const contractAddress = "0xb9c0cc4e755664f01ed86f110f2472d19b318aa3";
-const createGrantUrl = 'http://localhost:8081/v1/front/grants/create'
-const blockChainExplorer = "https://mumbai.polygonscan.com/"
+const createGrantUrl = 'https://civitas-api.arhamsoft.org/v1/front/grants/create'
 const domainUrl = "https://civitasbloc.webflow.io/"
-const contractABI = [{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "text", "type": "string" }], "name": "AgencyAdded", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "text", "type": "string" }], "name": "GrantCreated", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "text", "type": "string" }], "name": "GrantUpdated", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "string", "name": "text", "type": "string" }], "name": "OrgAdded", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "AllAgency", "outputs": [{ "internalType": "bytes32", "name": "id", "type": "bytes32" }, { "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "uint256", "name": "balance", "type": "uint256" }, { "internalType": "uint256", "name": "NoOfGrants", "type": "uint256" }, { "internalType": "bytes32", "name": "InfoLink", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "name": "AllGrant", "outputs": [{ "internalType": "bytes32", "name": "id", "type": "bytes32" }, { "internalType": "bytes32", "name": "agencyId", "type": "bytes32" }, { "internalType": "address", "name": "Approver", "type": "address" }, { "internalType": "uint256", "name": "Budget", "type": "uint256" }, { "internalType": "address", "name": "Creator", "type": "address" }, { "internalType": "bool", "name": "Approved", "type": "bool" }, { "internalType": "bytes32", "name": "InfoLink", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }], "name": "AllGrantSpent", "outputs": [{ "internalType": "bytes32", "name": "grantId", "type": "bytes32" }, { "internalType": "bytes32", "name": "orgId", "type": "bytes32" }, { "internalType": "uint256", "name": "Balance", "type": "uint256" }, { "internalType": "uint256", "name": "TotalBudgetAppointed", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "AllOrganization", "outputs": [{ "internalType": "bytes32", "name": "id", "type": "bytes32" }, { "internalType": "bytes32", "name": "InfoLink", "type": "bytes32" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_agencyAddress", "type": "address" }, { "internalType": "bytes32", "name": "_id", "type": "bytes32" }, { "internalType": "address", "name": "_owner", "type": "address" }, { "internalType": "uint256", "name": "_balance", "type": "uint256" }, { "internalType": "uint256", "name": "_noOfGrants", "type": "uint256" }, { "internalType": "bytes32", "name": "_infoLink", "type": "bytes32" }], "name": "addAgency", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "bytes32", "name": "id", "type": "bytes32" }, { "internalType": "bytes32", "name": "agencyId", "type": "bytes32" }, { "internalType": "address", "name": "Approver", "type": "address" }, { "internalType": "uint256", "name": "Budget", "type": "uint256" }, { "internalType": "address", "name": "Creator", "type": "address" }, { "internalType": "bool", "name": "Approved", "type": "bool" }, { "internalType": "bytes32", "name": "InfoLink", "type": "bytes32" }], "name": "addGrant", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_owner", "type": "address" }, { "internalType": "bytes32", "name": "_id", "type": "bytes32" }, { "internalType": "bytes32", "name": "_infoLink", "type": "bytes32" }], "name": "addOrg", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "owner", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_agencyAddress", "type": "address" }, { "internalType": "bytes32", "name": "_id", "type": "bytes32" }, { "internalType": "address", "name": "_owner", "type": "address" }, { "internalType": "uint256", "name": "_balance", "type": "uint256" }, { "internalType": "uint256", "name": "_noOfGrants", "type": "uint256" }, { "internalType": "bytes32", "name": "_infoLink", "type": "bytes32" }], "name": "updateGrantSpent", "outputs": [], "stateMutability": "nonpayable", "type": "function" }]
 
 let web3;
 let fromAddress;
@@ -16,43 +13,6 @@ let eligibilityCheck;
 let obj = {}
 let eligibilityName;
 var eligibleEntityTypes = []
-async function onInit(randomString, totalBudget) {
-  return new Promise(async function (resolve, reject) {
-    randomString = "0x" + randomString
-    console.log('randomString', randomString)
-    if (window.ethereum) {
-      await window.ethereum.enable();
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      fromAddress = accounts[0];
-      console.log('account', fromAddress);
-      web3 = new Web3(window.ethereum)
-    }
-    else {
-      const customNodeOptions = {
-        rpcUrl: 'https://rpc-mumbai.maticvigil.com/', // Polygon RPC URL
-        chainId: 80001, // Polygon chain id
-      }
-      const magic = new Magic('pk_live_350FEFDEDF81F26B', { network: customNodeOptions });
-      magic.network = 'matic';
-      web3 = new Web3(magic.rpcProvider);
-      fromAddress = (await web3.eth.getAccounts())[0];
-      console.log("fromAddress");
-      console.log(fromAddress);
-    }
-    totalBudget = "0x" + totalBudget
-    const celiexContract = new web3.eth.Contract(contractABI, contractAddress)
-    celiexContract.methods
-      .addGrant(randomString, '0x11111111111111111111111', '0x7Eb0156eF2b1d3545c8684d9eb005207Aaa723B7', totalBudget, '0x7Eb0156eF2b1d3545c8684d9eb005207Aaa723B7', false, '0x1111111')
-      .send({ from: fromAddress }, function (err, res) {
-        if (err) {
-          console.log(err)
-          resolve(false)
-          return
-        }
-        resolve(res)
-      })
-  })
-}
 const postData = async (obj) => {
   const token = localStorage.getItem('accessToken');
   try {
@@ -72,11 +32,7 @@ const postData = async (obj) => {
     return null;
   }
 };
-function generateRandomString() {
-  let randomString = '';
-  randomString += (Math.floor(100000000000 + Math.random() * 900000000000));
-  return randomString;
-}
+
 function getResponse(response) {
   Toastify({
     text: response.message + 'Please go to login page',
@@ -105,7 +61,6 @@ const submitToast = () => {
   }).showToast();
 }
 const checkResponse = (message, backgroundcolor) => {
-  // console.log('txRes', txRes)
   Toastify({
     text: message,
     duration: 4000,
@@ -118,8 +73,6 @@ const checkResponse = (message, backgroundcolor) => {
       background: `${backgroundcolor}`,
     },
     onClick: function () {
-      // if (success === true)
-      //   window.open(`${blockChainExplorer}tx/${txRes}`)
     }
   }).showToast();
 }
@@ -152,9 +105,6 @@ const submitReview = async () => {
     checkResponse("Please fill all the fields", "red")
     return;
   }
-  const randomString = generateRandomString() // "ersNAI"
-  // const txRes = await onInit(randomString, totalBudgetValue);
-  // console.log('txRes', txRes)
   data = {
     name: grantNameValue,
     opportunityNumber: opportunityNumberValue,
@@ -166,8 +116,6 @@ const submitReview = async () => {
     awardCeiling: awardCeilingValue,
     awardFloor: awardFloorValue,
     reportingDetails: reportingDetailsValue,
-    grantId: randomString,
-    // txHash: txRes
   };
   console.log("data", data)
   submitToast()
@@ -195,7 +143,7 @@ const submitReview = async () => {
 const listGrantCategories = async () => {
   console.log('token', token)
   try {
-    let response = await fetch('http://localhost:8081/v1/front/grants/list-active-categories', {
+    let response = await fetch('https://civitas-api.arhamsoft.org/v1/front/grants/list-active-categories', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

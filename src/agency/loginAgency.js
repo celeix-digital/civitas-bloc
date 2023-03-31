@@ -1,4 +1,4 @@
-const loginAgency = "http://localhost:8081/v1/front/agencies/login-agency"
+const loginAgency = "https://civitas-api.arhamsoft.org/v1/front/agencies/login-agency"
 const postData = async (obj) => {
   console.log("data post", obj);
   console.log("loginAgency url", loginAgency);

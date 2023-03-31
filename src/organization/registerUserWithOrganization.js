@@ -1,19 +1,23 @@
-const organization_type_url = 'http://localhost:8081/v1/admin/organizations/type/list'
-const register_user_with_organization_url = 'http://localhost:8081/v1/front/organizations/register-user-with-organization'
+const organization_type_url = 'https://civitas-api.arhamsoft.org/v1/admin/organizations/type/list'
+const register_user_with_organization_url = 'https://civitas-api.arhamsoft.org/v1/front/organizations/register-user-with-organization'
 let wallet;
 var files;
 let token;
 let message;
+let response;
 let formData = new FormData();
 const postData = async (obj) => {
   console.log("data post", obj);
   try {
-    const response = await fetch(register_user_with_organization_url, {
+    response = await fetch(register_user_with_organization_url, {
       method: "POST",
+      // headers: {
+      //   'Content-Type': 'application/json'
+      // },
       body: obj,
     });
-    const registerUserWithOrganization = await response.json();
-    return registerUserWithOrganization;
+    response = await response.json();
+    return response;
   } catch (error) {
     return null;
   }
@@ -40,6 +44,25 @@ const createWallet = async () => {
   document.getElementById("userWalletAddress").value = accounts[0];
   wallet = accounts[0]
   console.log("wallet", wallet)
+}
+const checkResponse = (success,message, txRes, backgroundcolor) => {
+  console.log('txRes', txRes)
+  Toastify({
+      text: message,
+      duration: 4000,
+      newWindow: true,
+      close: true,
+      gravity: "top",
+      position: "right",
+      stopOnFocus: true,
+      style: {
+          background: `${backgroundcolor}`,
+      },
+      onClick: function () {
+        if(success)
+          window.open(`${blockChainExplorer}tx/${txRes}`)
+      }
+  }).showToast();
 }
 const registerButton = async () => {
   const userNameInput = document.getElementById("userNameInput");
@@ -101,51 +124,35 @@ const registerButton = async () => {
   console.log("data", data)
   appendData(data)
   submitToast()
-  let response = await postData(formData);
+   response = await postData(formData);
   console.log("after hit api data...", response)
 
   if (response.success) {
-    checkResponse(response.message, response.txLink, backgroundcolor = "green")
+    checkResponse(response.success,response.message, response.txLink, backgroundcolor = "green")
   }
   else {
-    checkResponse(response.message, txLink = "", backgroundcolor = "#FF7002")
+    checkResponse(response.success,response.message, txLink = "", backgroundcolor = "#FF7002")
   }
-  if (response && response.success) {
-    if (userNameInput.value) userNameInput.value = "";
-    if (userEmailInput.value) userEmailInput.value = "";
-    if (userPasswordInput.value) userPasswordInput.value = "";
-    if (organizationNameInput.value) organizationNameInput.value = "";
-    if (organizationTypeInput.value) organizationTypeInput.value = "";
-    if (organizationRoleInput.value) organizationRoleInput.value = "";
-    if (streetAddressInput.value) streetAddressInput.value = "";
-    if (streetAddress2Input.value) streetAddress2Input.value = "";
-    if (organizationCityInput.value) organizationCityInput.value = "";
-    if (organizationStateInput.value) organizationStateInput.value = "";
-    if (organizationZipInput.value) organizationZipInput.value = "";
-    if (organizationDescriptionInput.value) organizationDescriptionInput.value = "";
-    if (organizationWebsiteInput.value) organizationWebsiteInput.value = "";
-    if (organizationPhoneInput.value) organizationPhoneInput.value = "";
-    if (userWalletAddressInput.value) userWalletAddressInput.value = "";
-    wallet = ""
-  }
+  if (userNameInput.value) userNameInput.value = "";
+  if (userEmailInput.value) userEmailInput.value = "";
+  if (userPasswordInput.value) userPasswordInput.value = "";
+  if (organizationNameInput.value) organizationNameInput.value = "";
+  if (organizationTypeInput.value) organizationTypeInput.value = "";
+  if (organizationRoleInput.value) organizationRoleInput.value = "";
+  if (streetAddressInput.value) streetAddressInput.value = "";
+  if (streetAddress2Input.value) streetAddress2Input.value = "";
+  if (organizationCityInput.value) organizationCityInput.value = "";
+  if (organizationStateInput.value) organizationStateInput.value = "";
+  if (organizationZipInput.value) organizationZipInput.value = "";
+  if (organizationDescriptionInput.value) organizationDescriptionInput.value = "";
+  if (organizationWebsiteInput.value) organizationWebsiteInput.value = "";
+  if (organizationPhoneInput.value) organizationPhoneInput.value = "";
+  if (userWalletAddressInput.value) userWalletAddressInput.value = "";
+  wallet = ""
+
   deleteData(data)
 }
-const checkResponse = (message, txLink, backgroundcolor) => {
-  Toastify({
-    text: message,
-    duration: 3000,
-    destination: txLink,
-    newWindow: true,
-    close: true,
-    gravity: "top",
-    position: "right",
-    stopOnFocus: true,
-    style: {
-      background: `${backgroundcolor}`,
-    },
-    onClick: function () { }
-  }).showToast();
-}
+
 const submitToast = () => {
   Toastify({
     text: "Your form has been submitted. Please wait while your user and organization is created.",
@@ -160,23 +167,18 @@ const submitToast = () => {
 const loadOrganizationTypes = async () => {
   console.log('organization_type_url', organization_type_url)
   try {
-    const response = await fetch(organization_type_url, {
+     response = await fetch(organization_type_url, {
       method: 'GET',
-    }).then(response => {
-      if (response.ok) {
-        return response.json()
+      headers: {
+        'Content-Type': 'application/json',
       }
     })
-
+    console.log('response', response)
+    response = await response.json();
     console.log('response load Organization types', response)
-    if (response === undefined) {
-      message = 'Failed to authenticate token.'
-      redirectPage(message)
-      return
-    }
-
 
     let data = response.data.organizationTypes;
+    console.log('data load Organization types', data)
     let listOrganizationTypeHtml = '';
     listOrganizationTypeHtml += `<select id="orgType-2" name="orgType" data-name="orgType" class="form-input w-select">` + `
        <option>Select one...</option>`
@@ -190,6 +192,7 @@ const loadOrganizationTypes = async () => {
     return null
   }
 }
+
 window.onload = function () {
   loadOrganizationTypes();
   const createWalletButton = document.getElementById("createWalletButton");

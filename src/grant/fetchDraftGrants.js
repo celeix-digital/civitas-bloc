@@ -1,4 +1,4 @@
-const draftGrantsUrl = 'http://localhost:8081/v1/front/grants/get-draft-grants'
+const draftGrantsUrl = 'https://civitas-api.arhamsoft.org/v1/front/grants/get-draft-grants'
 const domainUrl = "https://civitasbloc.webflow.io/"
 const blockChainExplorer = "https://mumbai.polygonscan.com/"
 const contractAddress = "0xb9c0cc4e755664f01ed86f110f2472d19b318aa3";
@@ -14,6 +14,7 @@ let getAllRows;
 let getColumn;
 let txRes;
 let totalBudget;
+let data;
 async function onInit(clickedButtonId, totalBudget) {
     return new Promise(async function (resolve, reject) {
         clickedButtonId = "0x" + clickedButtonId
@@ -45,7 +46,7 @@ async function onInit(clickedButtonId, totalBudget) {
             .send({ from: fromAddress }, function (err, res) {
                 if (err) {
                     console.log(err)
-                    resolve(false)
+                    reject(false)
                     return
                 }
                 resolve(res)
@@ -53,17 +54,20 @@ async function onInit(clickedButtonId, totalBudget) {
     })
 }
 const approveGrant = async () => {
+    const obj = {
+        draftGrantId,
+        txRes
+    }
     try {
-        response = await fetch(`http://localhost:8081/v1/front/grants/publish-grant/${draftGrantId}`, {
-            method: 'PUT',
+        response = await fetch(`https://civitas-api.arhamsoft.org/v1/front/grants/publish-grant`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`
-            }
+            },
+            body: JSON.stringify(obj),
         })
-        console.log("response before", response);
         response = await response.json();
-        console.log("response after", response);
         return response;
     } catch (error) {
         return null
@@ -105,7 +109,7 @@ const renderdraftGrants = (response) => {
     data.forEach(draftGrant => {
         draftGrantsHtml += `<div role="row" class="open-grants_item" id=${draftGrant._id} totalbudget=${draftGrant.totalBudget}>
     <div role="cell" class="open-grants_column">
-      <div fs-cmssort-field="IDENTIFIER" class="text-weight-medium">${draftGrant.grantName}</div>
+      <div fs-cmssort-field="IDENTIFIER" class="text-weight-medium">${draftGrant.name}</div>
     </div>
     <div role="cell" class="open-grants_column is-width-large">
       <div fs-cmssort-field="IDENTIFIER">${draftGrant.rfaNo}</div>
@@ -116,7 +120,7 @@ const renderdraftGrants = (response) => {
       </div>
     </div>
     <div role="cell" class="open-grants_column is-width-large">
-      <div fs-cmssort-field="IDENTIFIER">${draftGrant.name}</div>
+      <div fs-cmssort-field="IDENTIFIER">${draftGrant.creatorname}</div>
     </div>
     <div role="cell" class="open-grants_column is-width-medium">
       <div fs-cmssort-type="date" fs-cmssort-field="IDENTIFIER">${draftGrant.createdAt}</div>
@@ -149,6 +153,21 @@ const checkResponse = (message, txRes, backgroundcolor) => {
         }
     }).showToast();
 }
+const isApproved = async() => {
+    try {
+        response = await fetch(`https://civitas-api.arhamsoft.org/v1/front/grants/is-approved`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            },
+        })
+        response = await response.json();
+        return response;
+    } catch (error) {
+        return null
+    }
+}
 window.onload = async function () {
     token = localStorage.getItem('accessToken')
     response = await getDraftGrants()
@@ -165,21 +184,27 @@ window.onload = async function () {
         button.addEventListener('click', async (event) => {
             clickedButtonId = event.target;
             draftGrantId = clickedButtonId.getAttribute("data-id");
+             const boolApproved = await isApproved()
+             console.log('boolApproved', boolApproved)
+            if (!boolApproved.success) {
+                checkResponse(response.message, "", backgroundcolor = "red")
+                return;
+            }
             totalBudget = await getTotalBudget(draftGrantId)
             console.log("Button " + clickedButtonId.textContent + " clicked." + draftGrantId);
             txRes = await onInit(draftGrantId, totalBudget);
             console.log('txRes', txRes)
             response = await approveGrant()
+            console.log('response approve', response)
+            data = response.publishGrants
             if (response && response.success) {
-                checkResponse(response.message + " Click here to view the transsaction on chain.", txRes, backgroundcolor = "linear-gradient(to right, #00b09b, #96c93d)")
-                button.disabled = true
-                localStorage.setItem(draftGrantId, 'disabled');
-                await updateStatus(draftGrantId)
+                if (data.published === 'Approved') {
+                    checkResponse(response.message + " Click here to view the transsaction on chain.", txRes, backgroundcolor = "linear-gradient(to right, #00b09b, #96c93d)")
+                    button.disabled = true
+                    localStorage.setItem(draftGrantId, 'disabled');
+                    await updateStatus(draftGrantId)
+                }
             }
-            // else {
-            //     button.disabled = false
-            //     localStorage.removeItem(draftGrantId);
-            // }
         });
     };
 }
@@ -189,7 +214,8 @@ const onReload = async (buttons) => {
         console.log('getEveryId onReload', getEveryId)
         getColumn = await isStatusUpdated(getEveryId)
         console.log('getColumn Approved or Pending', getColumn)
-        if (localStorage.getItem(getEveryId) === 'disabled' && getColumn === 'Approved') {
+        if (getColumn === 'Approved') {
+            // if (localStorage.getItem(getEveryId) !== 'disabled')
             button.disabled = true;
         }
         // else {
